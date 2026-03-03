@@ -35,7 +35,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PantallaLogin(
+fun LoginScreen(
     onLoginSuccess: () -> Unit
 ) {
 

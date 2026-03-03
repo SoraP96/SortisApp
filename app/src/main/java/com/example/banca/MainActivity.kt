@@ -9,7 +9,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.banca.ui.screens.PantallaLogin
+import com.example.banca.ui.screens.LoginScreen
+import com.example.banca.ui.screens.MainScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -20,9 +21,9 @@ class MainActivity : ComponentActivity() {
                 var estaLogueado by remember { mutableStateOf(false) }
 
                 if (estaLogueado) {
-                    PantallaListero()
+                    MainScreen()
                 } else {
-                    PantallaLogin(
+                    LoginScreen(
                         onLoginSuccess = { estaLogueado = true }
                     )
                 }
@@ -33,23 +34,10 @@ class MainActivity : ComponentActivity() {
 
 
 
-@Composable
-fun PantallaListero() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "Pantalla del Listero",
-            style = MaterialTheme.typography.headlineMedium
-        )
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 fun PreviewLogin() {
     MaterialTheme {
-        PantallaLogin(onLoginSuccess = {})
+        LoginScreen(onLoginSuccess = {})
     }
 }
