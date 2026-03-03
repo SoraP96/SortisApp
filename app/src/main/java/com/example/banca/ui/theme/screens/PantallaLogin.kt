@@ -1,4 +1,4 @@
-package com.example.banca
+package com.example.banca.ui.theme.screens
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
