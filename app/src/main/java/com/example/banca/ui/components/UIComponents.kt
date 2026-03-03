@@ -1,18 +1,55 @@
 package com.example.banca.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Looks
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+
+@Composable
+fun SortisAppIcon(size: Dp = 120.dp) {
+    val colorDegradado = Brush.linearGradient(
+        colors = listOf(
+            MaterialTheme.colorScheme.background,
+            MaterialTheme.colorScheme.surfaceVariant
+        )
+    )
+
+    Box(
+        modifier = Modifier
+            .size(size)
+            .background(colorDegradado, shape = CircleShape)
+            .padding(12.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = Icons.Default.Public,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.1f),
+            modifier = Modifier.size(size * 0.7f)
+        )
+        Icon(
+            imageVector = Icons.Default.Looks,
+            contentDescription = "Sortis",
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(size * 0.5f)
+        )
+    }
+}
 
 @Composable
 fun SeccionSimple(titulo: String, contenido: @Composable () -> Unit) {
