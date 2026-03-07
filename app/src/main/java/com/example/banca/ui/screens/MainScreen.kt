@@ -5,6 +5,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -15,30 +16,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel // NUEVO IMPORT
 import com.example.banca.ui.components.BotonCircular
 import com.example.banca.ui.components.BotonCircularGrande
 import com.example.banca.ui.components.SeccionSimple
+import com.example.banca.ui.viewmodels.MainViewModel // NUEVO IMPORT
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
-    // Estados
-    var mensaje by remember { mutableStateOf("Sin acción") }
-    val scrollState = rememberScrollState()
+fun MainScreen(
+    viewModel: MainViewModel = viewModel(), // Inyectamos el cerebro
+    onNavigateToLimits: () -> Unit
+) {
+    // 🧠 Observamos los datos que vienen del ViewModel
+    val mensaje by viewModel.mensajeAccion.collectAsState()
 
-    // Control del menú lateral (Drawer)
+    // 🎨 Estados puramente visuales (se quedan aquí)
+    val scrollState = rememberScrollState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
 
-    // 1. ESTRUCTURA DEL MENÚ LATERAL (DRAWER)
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = true,
         drawerContent = {
-            ModalDrawerSheet(
-                modifier = Modifier.width(280.dp) // Ancho del menú
-            ) {
+            ModalDrawerSheet(modifier = Modifier.width(280.dp)) {
                 Spacer(Modifier.height(24.dp))
                 Text(
                     text = "Administración",
@@ -49,13 +52,12 @@ fun MainScreen() {
                 )
                 Divider(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
 
-                // Sección Configuraciones en el menú
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Default.Schedule, contentDescription = null) },
                     label = { Text("Horario") },
                     selected = false,
                     onClick = {
-                        mensaje = "Config -> Horario"
+                        viewModel.registrarAccion("Config -> Horario")
                         scope.launch { drawerState.close() }
                     },
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
@@ -65,17 +67,17 @@ fun MainScreen() {
                     label = { Text("Pagos") },
                     selected = false,
                     onClick = {
-                        mensaje = "Config -> Pagos"
+                        viewModel.registrarAccion("Config -> Pagos")
                         scope.launch { drawerState.close() }
                     },
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                 )
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Default.Warning, contentDescription = null) },
-                    label = { Text("Límites") },
+                    label = { Text("Límites generales") },
                     selected = false,
                     onClick = {
-                        mensaje = "Config -> Límites"
+                        viewModel.registrarAccion("Config -> Límites")
                         scope.launch { drawerState.close() }
                     },
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
@@ -83,13 +85,12 @@ fun MainScreen() {
 
                 Divider(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp))
 
-                // Sección Usuario en el menú
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Default.VpnKey, contentDescription = null) },
                     label = { Text("Cambiar Clave") },
                     selected = false,
                     onClick = {
-                        mensaje = "Usuario -> Clave"
+                        viewModel.registrarAccion("Usuario -> Clave")
                         scope.launch { drawerState.close() }
                     },
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
@@ -99,22 +100,22 @@ fun MainScreen() {
                     label = { Text("Configuración App") },
                     selected = false,
                     onClick = {
-                        mensaje = "Usuario -> Config"
+                        viewModel.registrarAccion("Usuario -> Config")
                         scope.launch { drawerState.close() }
                     },
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                 )
 
-                Spacer(Modifier.weight(1f)) // Empuja el botón salir hacia abajo
+                Spacer(Modifier.weight(1f))
 
-                // Botón Salir
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Default.ExitToApp, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
                     label = { Text("Cerrar Sesión", color = MaterialTheme.colorScheme.error) },
                     selected = false,
                     onClick = {
-                        mensaje = "Usuario -> Salir"
+                        viewModel.cerrarSesion()
                         scope.launch { drawerState.close() }
+                        // Aquí en el futuro llamaremos a una función para volver al Login
                     },
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                 )
@@ -122,19 +123,17 @@ fun MainScreen() {
             }
         }
     ) {
-        // 2. ESTRUCTURA DE LA PANTALLA PRINCIPAL
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Nombre de usuario", fontWeight = FontWeight.Bold) },
+                    title = { Text("Sortis", fontWeight = FontWeight.Bold) },
                     navigationIcon = {
-                        // Botón de menú hamburguesa
                         IconButton(onClick = { scope.launch { drawerState.open() } }) {
                             Icon(Icons.Default.Menu, contentDescription = "Abrir menú")
                         }
                     },
                     actions = {
-                        IconButton(onClick = { mensaje = "Notificaciones" }) {
+                        IconButton(onClick = { viewModel.registrarAccion("Notificaciones abiertas") }) {
                             Icon(Icons.Default.Notifications, contentDescription = "Notificaciones")
                         }
                     },
@@ -157,7 +156,6 @@ fun MainScreen() {
             ) {
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // 🔹 BOTÓN PRINCIPAL: "Vault / Meter jugada"
                 Box(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                     contentAlignment = Alignment.Center
@@ -165,23 +163,21 @@ fun MainScreen() {
                     BotonCircularGrande(
                         texto = "NUEVA JUGADA",
                         icono = Icons.Default.AddCircle,
-                        onClick = { mensaje = "Abriendo Vault..." }
+                        onClick = { viewModel.registrarAccion("Abriendo Vault...") }
                     )
                 }
 
-                // 🔹 SECCIÓN: "Atrasados"
                 SeccionSimple(titulo = "Atrasados") {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        BotonCircular("Fijo", Icons.Default.LooksOne) { mensaje = "Atrasados: Fijo" }
-                        BotonCircular("Terminal", Icons.Default.LooksTwo) { mensaje = "Atrasados: Terminal" }
-                        BotonCircular("Decena", Icons.Default.Looks3) { mensaje = "Atrasados: Decena" }
+                        BotonCircular("Fijo", Icons.Default.LooksOne) { viewModel.registrarAccion("Atrasados: Fijo") }
+                        BotonCircular("Terminal", Icons.Default.LooksTwo) { viewModel.registrarAccion("Atrasados: Terminal") }
+                        BotonCircular("Decena", Icons.Default.Looks3) { viewModel.registrarAccion("Atrasados: Decena") }
                     }
                 }
 
-                // 🔹 SECCIÓN: "Mis Listas"
                 SeccionSimple(titulo = "Gestión de Listas") {
                     val itemsLista = listOf(
                         "Enviadas" to Icons.Default.Send,
@@ -192,7 +188,7 @@ fun MainScreen() {
                     )
 
                     LazyVerticalGrid(
-                        columns = GridCells.Fixed(3), // 3 columnas para que respiren mejor los botones
+                        columns = GridCells.Fixed(3),
                         modifier = Modifier.height(200.dp),
                         userScrollEnabled = false,
                         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -202,26 +198,52 @@ fun MainScreen() {
                             BotonCircular(
                                 texto = nombre,
                                 icono = icono,
-                                onClick = { mensaje = "Listas: $nombre" }
+                                onClick = { viewModel.registrarAccion("Listas: $nombre") }
                             )
                         }
                     }
                 }
 
-                // 🔹 SECCIÓN: "Limitados"
-                SeccionSimple(titulo = "Limitados") {
-                    Row(
+                SeccionSimple(titulo = "Control de Riesgo") {
+                    Card(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceEvenly
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                        onClick = onNavigateToLimits
                     ) {
-                        BotonCircular("Bola", Icons.Default.SportsBasketball) { mensaje = "Limitados: Bola" }
-                        BotonCircular("Parte", Icons.Default.PieChart) { mensaje = "Limitados: Parte" }
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Column {
+                                Text(
+                                    text = "Ver Números Limitados",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                                )
+                                Text(
+                                    text = "Revisa topes activos de Bola y Parle",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                                )
+                            }
+                            Icon(
+                                imageVector = Icons.Default.PieChart,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
                     }
                 }
 
-                // Estado de prueba
                 Text(
-                    text = "Acción: $mensaje",
+                    text = "Acción registrada en ViewModel: $mensaje",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.secondary,

@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.toArgb
 
 @Composable
 fun SortisAppIcon(size: Dp = 120.dp) {
@@ -145,6 +146,34 @@ fun BotonCircularGrande(
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+fun BadgeEstado(
+    registrado: Double,
+    tope: Double,
+    modifier: Modifier = Modifier
+) {
+    val porcentaje = if (tope > 0) registrado / tope else 0.0
+    val colorEstado = when {
+        porcentaje >= 1.0 -> MaterialTheme.colorScheme.error // Rojo: Cerrado
+        porcentaje >= 0.8 -> Color(0xFFFFA726) // Naranja: Casi lleno
+        else -> Color(0xFF66BB6A) // Verde: Abierto
+    }
+
+    Surface(
+        color = colorEstado,
+        shape = RoundedCornerShape(50),
+        modifier = modifier
+    ) {
+        Text(
+            text = if (porcentaje >= 1.0) "CERRADO" else "${(porcentaje * 100).toInt()}%",
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
         )
     }
 }
