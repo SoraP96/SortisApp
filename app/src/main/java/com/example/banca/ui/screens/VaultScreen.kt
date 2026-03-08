@@ -28,10 +28,11 @@ fun VaultScreen(
     viewModel: VaultViewModel = viewModel(),
     onBack: () -> Unit
 ) {
-    val numero by viewModel.numeroInput.collectAsState()
-    val monto by viewModel.montoInput.collectAsState()
-    val tipo by viewModel.tipoJugada.collectAsState()
-    val fase by viewModel.faseInput.collectAsState()
+    val numero by viewModel.numberInput.collectAsState()
+    val monto by viewModel.amountInput.collectAsState()
+    val tipo by viewModel.playType.collectAsState()
+    val fase by viewModel.inputPhase.collectAsState()
+    val error by viewModel.errorMessage.collectAsState()
 
     Scaffold(
         topBar = {
@@ -101,6 +102,21 @@ fun VaultScreen(
                     }
                 }
             }
+            // ALERTA DE ERROR DE LÍMITES
+            if (error.isNotEmpty()) {
+                Text(
+                    text = error,
+                    color = MaterialTheme.colorScheme.error,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    textAlign = TextAlign.Center
+                )
+            } else {
+                // Espaciador para que la UI no salte cuando no hay error
+                Spacer(modifier = Modifier.height(36.dp))
+            }
 
             // 2. SELECTORES DE TIPO DE JUGADA
             Row(
@@ -109,9 +125,9 @@ fun VaultScreen(
                     .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                BotonTipoJugada("Fijo", tipo == "Fijo") { viewModel.cambiarTipoJugada("Fijo") }
-                BotonTipoJugada("Corrido", tipo == "Corrido") { viewModel.cambiarTipoJugada("Corrido") }
-                BotonTipoJugada("Parle", tipo == "Parle") { viewModel.cambiarTipoJugada("Parle") }
+                BotonTipoJugada("Fijo", tipo == "Fijo") { viewModel.changePlayType("Fijo") }
+                BotonTipoJugada("Corrido", tipo == "Corrido") { viewModel.changePlayType("Corrido") }
+                BotonTipoJugada("Parle", tipo == "Parle") { viewModel.changePlayType("Parle") }
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -142,9 +158,9 @@ fun VaultScreen(
                             modifier = Modifier.weight(1f).fillMaxHeight().padding(4.dp),
                             onClick = {
                                 when (tecla) {
-                                    "DEL" -> viewModel.onBorrar()
-                                    "OK" -> viewModel.onSiguienteFase()
-                                    else -> viewModel.onTeclaPresionada(tecla)
+                                    "DEL" -> viewModel.onDelete()
+                                    "OK" -> viewModel.onNextPhase()
+                                    else -> viewModel.onKeyPressed(tecla)
                                 }
                             }
                         )
