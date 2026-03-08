@@ -2,28 +2,21 @@ package com.example.banca
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.banca.ui.screens.LoginScreen
-import com.example.banca.ui.screens.MainScreen
-import androidx.activity.compose.BackHandler // Importante para manejar el botón de 'atrás' del móvil
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import com.example.banca.ui.screens.LoginScreen
 import com.example.banca.ui.screens.MainScreen
 import com.example.banca.ui.screens.LimitsScreen
+import com.example.banca.ui.screens.VaultScreen // NUEVO IMPORT
 
-// Definimos los posibles estados de la aplicación
+// Enum translated to English
 enum class AppScreen {
     Login,
     Dashboard,
-    Limits
+    Limits,
+    Vault
 }
 
 class MainActivity : ComponentActivity() {
@@ -31,13 +24,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
-                // Estado que controla qué pantalla estamos viendo
+
                 var currentScreen by remember { mutableStateOf(AppScreen.Login) }
 
-                // Manejador del botón 'atrás' físico del teléfono
                 BackHandler(enabled = currentScreen != AppScreen.Login) {
                     currentScreen = when (currentScreen) {
                         AppScreen.Limits -> AppScreen.Dashboard
+                        AppScreen.Vault -> AppScreen.Dashboard
                         else -> AppScreen.Login
                     }
                 }
@@ -51,13 +44,17 @@ class MainActivity : ComponentActivity() {
                         }
                         AppScreen.Dashboard -> {
                             MainScreen(
-                                // Pasamos la función para ir a límites
-                                onNavigateToLimits = { currentScreen = AppScreen.Limits }
+                                onNavigateToLimits = { currentScreen = AppScreen.Limits },
+                                onNavigateToVault = { currentScreen = AppScreen.Vault }
                             )
                         }
                         AppScreen.Limits -> {
                             LimitsScreen(
-                                // Pasamos la función para volver al dashboard
+                                onBack = { currentScreen = AppScreen.Dashboard }
+                            )
+                        }
+                        AppScreen.Vault -> {
+                            VaultScreen(
                                 onBack = { currentScreen = AppScreen.Dashboard }
                             )
                         }
@@ -65,15 +62,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-}
-
-
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewLogin() {
-    MaterialTheme {
-        LoginScreen(onLoginSuccess = {})
     }
 }

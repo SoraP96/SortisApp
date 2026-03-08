@@ -16,26 +16,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel // NUEVO IMPORT
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.banca.ui.components.BotonCircular
 import com.example.banca.ui.components.BotonCircularGrande
 import com.example.banca.ui.components.SeccionSimple
-import com.example.banca.ui.viewmodels.MainViewModel // NUEVO IMPORT
+import com.example.banca.ui.viewmodels.MainViewModel
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
-    viewModel: MainViewModel = viewModel(), // Inyectamos el cerebro
-    onNavigateToLimits: () -> Unit
+    viewModel: MainViewModel = viewModel(),
+    onNavigateToLimits: () -> Unit,
+    onNavigateToVault: () -> Unit // Navegación al teclado numérico
 ) {
-    // 🧠 Observamos los datos que vienen del ViewModel
-    val mensaje by viewModel.mensajeAccion.collectAsState()
-
-    // 🎨 Estados puramente visuales (se quedan aquí)
+    // English variables for State
+    val actionMessage by viewModel.actionMessage.collectAsState()
     val scrollState = rememberScrollState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val scope = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope()
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -57,8 +56,8 @@ fun MainScreen(
                     label = { Text("Horario") },
                     selected = false,
                     onClick = {
-                        viewModel.registrarAccion("Config -> Horario")
-                        scope.launch { drawerState.close() }
+                        viewModel.registerAction("Config -> Horario")
+                        coroutineScope.launch { drawerState.close() }
                     },
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                 )
@@ -67,8 +66,8 @@ fun MainScreen(
                     label = { Text("Pagos") },
                     selected = false,
                     onClick = {
-                        viewModel.registrarAccion("Config -> Pagos")
-                        scope.launch { drawerState.close() }
+                        viewModel.registerAction("Config -> Pagos")
+                        coroutineScope.launch { drawerState.close() }
                     },
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                 )
@@ -77,8 +76,8 @@ fun MainScreen(
                     label = { Text("Límites generales") },
                     selected = false,
                     onClick = {
-                        viewModel.registrarAccion("Config -> Límites")
-                        scope.launch { drawerState.close() }
+                        viewModel.registerAction("Config -> Límites")
+                        coroutineScope.launch { drawerState.close() }
                     },
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                 )
@@ -90,8 +89,8 @@ fun MainScreen(
                     label = { Text("Cambiar Clave") },
                     selected = false,
                     onClick = {
-                        viewModel.registrarAccion("Usuario -> Clave")
-                        scope.launch { drawerState.close() }
+                        viewModel.registerAction("Usuario -> Clave")
+                        coroutineScope.launch { drawerState.close() }
                     },
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                 )
@@ -100,8 +99,8 @@ fun MainScreen(
                     label = { Text("Configuración App") },
                     selected = false,
                     onClick = {
-                        viewModel.registrarAccion("Usuario -> Config")
-                        scope.launch { drawerState.close() }
+                        viewModel.registerAction("Usuario -> Config")
+                        coroutineScope.launch { drawerState.close() }
                     },
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                 )
@@ -113,9 +112,8 @@ fun MainScreen(
                     label = { Text("Cerrar Sesión", color = MaterialTheme.colorScheme.error) },
                     selected = false,
                     onClick = {
-                        viewModel.cerrarSesion()
-                        scope.launch { drawerState.close() }
-                        // Aquí en el futuro llamaremos a una función para volver al Login
+                        viewModel.logout()
+                        coroutineScope.launch { drawerState.close() }
                     },
                     modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
                 )
@@ -128,12 +126,12 @@ fun MainScreen(
                 TopAppBar(
                     title = { Text("Sortis", fontWeight = FontWeight.Bold) },
                     navigationIcon = {
-                        IconButton(onClick = { scope.launch { drawerState.open() } }) {
+                        IconButton(onClick = { coroutineScope.launch { drawerState.open() } }) {
                             Icon(Icons.Default.Menu, contentDescription = "Abrir menú")
                         }
                     },
                     actions = {
-                        IconButton(onClick = { viewModel.registrarAccion("Notificaciones abiertas") }) {
+                        IconButton(onClick = { viewModel.registerAction("Notificaciones abiertas") }) {
                             Icon(Icons.Default.Notifications, contentDescription = "Notificaciones")
                         }
                     },
@@ -160,10 +158,11 @@ fun MainScreen(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
                     contentAlignment = Alignment.Center
                 ) {
+                    // AQUÍ ESTÁ LA CORRECCIÓN: El botón gigante llama a onNavigateToVault
                     BotonCircularGrande(
                         texto = "NUEVA JUGADA",
                         icono = Icons.Default.AddCircle,
-                        onClick = { viewModel.registrarAccion("Abriendo Vault...") }
+                        onClick = onNavigateToVault
                     )
                 }
 
@@ -172,14 +171,14 @@ fun MainScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        BotonCircular("Fijo", Icons.Default.LooksOne) { viewModel.registrarAccion("Atrasados: Fijo") }
-                        BotonCircular("Terminal", Icons.Default.LooksTwo) { viewModel.registrarAccion("Atrasados: Terminal") }
-                        BotonCircular("Decena", Icons.Default.Looks3) { viewModel.registrarAccion("Atrasados: Decena") }
+                        BotonCircular("Fijo", Icons.Default.LooksOne) { viewModel.registerAction("Atrasados: Fijo") }
+                        BotonCircular("Terminal", Icons.Default.LooksTwo) { viewModel.registerAction("Atrasados: Terminal") }
+                        BotonCircular("Decena", Icons.Default.Looks3) { viewModel.registerAction("Atrasados: Decena") }
                     }
                 }
 
                 SeccionSimple(titulo = "Gestión de Listas") {
-                    val itemsLista = listOf(
+                    val listItems = listOf(
                         "Enviadas" to Icons.Default.Send,
                         "Borradores" to Icons.Default.Drafts,
                         "Guardado" to Icons.Default.Save,
@@ -194,11 +193,11 @@ fun MainScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(itemsLista) { (nombre, icono) ->
+                        items(listItems) { (name, icon) ->
                             BotonCircular(
-                                texto = nombre,
-                                icono = icono,
-                                onClick = { viewModel.registrarAccion("Listas: $nombre") }
+                                texto = name,
+                                icono = icon,
+                                onClick = { viewModel.registerAction("Listas: $name") } // Se restauró la acción correcta
                             )
                         }
                     }
@@ -243,7 +242,7 @@ fun MainScreen(
                 }
 
                 Text(
-                    text = "Acción registrada en ViewModel: $mensaje",
+                    text = "Acción registrada en ViewModel: $actionMessage",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.secondary,
