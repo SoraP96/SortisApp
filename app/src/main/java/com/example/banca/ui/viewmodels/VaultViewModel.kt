@@ -1,20 +1,32 @@
 package com.example.banca.ui.viewmodels
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.banca.data.database.DatabaseProvider
+import com.example.banca.data.repository.PlayRepository
 import com.example.banca.domain.models.PlayTicket
 import com.example.banca.domain.usecases.CalculateTicketUseCase
+import com.example.banca.domain.usecases.CheckLimitsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import com.example.banca.domain.usecases.CheckLimitsUseCase
+import kotlinx.coroutines.launch
 
-class VaultViewModel : ViewModel() {
+// Cambiamos ViewModel() por AndroidViewModel(application) para tener contexto
+class VaultViewModel(application: Application) : AndroidViewModel(application) {
 
-    // Instanciamos el motor matemático (Más adelante usaremos Inyección de Dependencias real)
     private val calculateTicketUseCase = CalculateTicketUseCase()
     private val checkLimitsUseCase = CheckLimitsUseCase()
 
-    // Estados de la interfaz
+    // NUEVO: Instanciamos el repositorio usando nuestro DatabaseProvider encriptado
+    private val repository: PlayRepository
+
+    init {
+        val dao = DatabaseProvider.getDatabase(application).playDao()
+        repository = PlayRepository(dao)
+    }
+
     private val _numberInput = MutableStateFlow("")
     val numberInput: StateFlow<String> = _numberInput.asStateFlow()
 
@@ -26,10 +38,6 @@ class VaultViewModel : ViewModel() {
 
     private val _inputPhase = MutableStateFlow(0)
     val inputPhase: StateFlow<Int> = _inputPhase.asStateFlow()
-
-    // Variable temporal para ver el ticket generado en la consola (prueba)
-    private val _lastTicket = MutableStateFlow<PlayTicket?>(null)
-    val lastTicket: StateFlow<PlayTicket?> = _lastTicket.asStateFlow()
 
     private val _errorMessage = MutableStateFlow("")
     val errorMessage: StateFlow<String> = _errorMessage.asStateFlow()
@@ -63,7 +71,6 @@ class VaultViewModel : ViewModel() {
 
     fun onNextPhase() {
         if (_inputPhase.value == 0 && _numberInput.value.isNotEmpty()) {
-            // Validamos que el Parle tenga 4 números obligatoriamente
             if (_playType.value == "Parle" && _numberInput.value.length < 4) return
             _inputPhase.value = 1
         } else if (_inputPhase.value == 1 && _amountInput.value.isNotEmpty()) {
@@ -81,7 +88,6 @@ class VaultViewModel : ViewModel() {
     private fun registerPlay() {
         val amount = _amountInput.value.toDoubleOrNull() ?: return
 
-        // 1. Verificamos si la jugada supera el tope del banco
         val isAllowed = checkLimitsUseCase.execute(
             number = _numberInput.value,
             playType = _playType.value,
@@ -89,31 +95,29 @@ class VaultViewModel : ViewModel() {
         )
 
         if (!isAllowed) {
-            // ¡Bloqueamos la jugada y avisamos a la vista!
             _errorMessage.value = "¡Límite superado para el número ${_numberInput.value}!"
-            _inputPhase.value = 0 // Lo devolvemos a teclear el número
+            _inputPhase.value = 0
             _numberInput.value = ""
             _amountInput.value = ""
-            return // Detenemos la ejecución aquí
+            return
         }
 
-        // Si pasó el límite, limpiamos errores
         _errorMessage.value = ""
 
-        // 2. Enviamos los datos crudos al motor matemático
         val ticket = calculateTicketUseCase.execute(
             number = _numberInput.value,
             type = _playType.value,
             amountText = _amountInput.value
         )
 
-        // 3. Guardamos el ticket
         if (ticket != null) {
-            _lastTicket.value = ticket
-            println("Ticket generado con éxito: $ticket")
+            // NUEVO: Guardamos en la base de datos usando una corrutina
+            viewModelScope.launch {
+                val insertedId = repository.savePlay(ticket)
+                println("¡ÉXITO! Ticket encriptado y guardado en SQLCipher con el ID: $insertedId")
+            }
         }
 
-        // 4. Limpiamos la pantalla para la siguiente jugada
         _numberInput.value = ""
         _amountInput.value = ""
         _inputPhase.value = 0

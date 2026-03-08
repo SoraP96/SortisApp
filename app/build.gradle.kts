@@ -1,15 +1,17 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
 }
 
 android {
     namespace = "com.example.banca"
-    compileSdk {
+    compileSdk = 36
+    /*compileSdk {
         version = release(36) {
             minorApiLevel = 1
         }
-    }
+    }*/
 
     defaultConfig {
         applicationId = "com.example.banca"
@@ -31,12 +33,18 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+
     buildFeatures {
         compose = true
     }
+
+}
+// Esto le dice a Kotlin que use Java 17 para todo el proyecto automáticamente
+kotlin {
+    jvmToolchain(17)
 }
 
 dependencies {
@@ -57,4 +65,22 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
+    // Room Database
+    //val roomVersion = "2.6.1"
+    implementation("androidx.room:room-runtime:2.7.0")
+    implementation("androidx.room:room-ktx:2.7.0")
+
+    // USAMOS KSP EN LUGAR DE KAPT:
+    ksp("androidx.room:room-compiler:2.7.0")
+
+    // SQLCipher para encriptación AES-256
+    implementation("net.zetetic:android-database-sqlcipher:4.5.4")
+    implementation("androidx.sqlite:sqlite-ktx:2.4.0")
+
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
+
+
+
+
+
 }
