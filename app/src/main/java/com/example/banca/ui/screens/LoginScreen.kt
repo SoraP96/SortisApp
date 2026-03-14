@@ -26,21 +26,22 @@ import com.example.banca.ui.viewmodels.LoginViewModel // NUEVO IMPORT
 fun LoginScreen(
     // Inyectamos el ViewModel
     viewModel: LoginViewModel = viewModel(),
-    onLoginSuccess: () -> Unit
+    onLoginSuccess: (String) -> Unit
 ) {
     // Observamos los datos seguros que vienen del ViewModel
     val codigo by viewModel.codigo.collectAsState()
     val clave by viewModel.clave.collectAsState()
     val loginExitoso by viewModel.loginExitoso.collectAsState()
     val mensajeError by viewModel.mensajeError.collectAsState()
+    val userRole by viewModel.userRole.collectAsState()
 
     var passwordVisible by remember { mutableStateOf(false) }
 
     // Reaccionamos si el login fue exitoso
     LaunchedEffect(loginExitoso) {
         if (loginExitoso) {
-            onLoginSuccess()
-            viewModel.resetLogin() // Limpiamos para cuando cierre sesión
+            onLoginSuccess(userRole) // Enviamos si es ADMIN o LISTERO
+            viewModel.resetLogin()
         }
     }
 

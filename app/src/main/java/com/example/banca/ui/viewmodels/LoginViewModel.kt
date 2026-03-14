@@ -9,6 +9,10 @@ class LoginViewModel : ViewModel() {
 
     // Variables privadas: Solo el ViewModel puede modificarlas.
     // Esto es un principio básico de seguridad (Encapsulamiento).
+
+    private val _userRole = kotlinx.coroutines.flow.MutableStateFlow("LISTERO")
+
+    val userRole: kotlinx.coroutines.flow.StateFlow<String> = _userRole
     private val _codigo = MutableStateFlow("")
     val codigo: StateFlow<String> = _codigo.asStateFlow()
 
@@ -32,17 +36,17 @@ class LoginViewModel : ViewModel() {
 
     // La lógica real de validación
     fun intentarLogin() {
-        // AHORA ESTÁ QUEMADO, pero aquí es donde más adelante
-        // conectaremos con la base de datos SQLCipher encriptada.
-        val codigoCorrecto = "1234"
-        val claveCorrecta = "admin"
+        val user = codigo.value
+        val pass = clave.value
 
-        if (_codigo.value == codigoCorrecto && _clave.value == claveCorrecta) {
+        if (user == "admin" && pass == "admin123") {
+            _userRole.value = "ADMIN"
             _loginExitoso.value = true
-            _mensajeError.value = ""
+        } else if (user == "listero" && pass == "123") {
+            _userRole.value = "LISTERO"
+            _loginExitoso.value = true
         } else {
-            _loginExitoso.value = false
-            _mensajeError.value = "Código o clave incorrectos"
+            _mensajeError.value = "Credenciales incorrectas"
         }
     }
 

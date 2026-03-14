@@ -27,9 +27,11 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
+    userRole: String,
     viewModel: MainViewModel = viewModel(),
     onNavigateToLimits: () -> Unit,
-    onNavigateToVault: () -> Unit // Navegación al teclado numérico
+    onNavigateToVault: () -> Unit, // Navegación al teclado numérico
+    onNavigateToBankVault: () -> Unit
 ) {
     // English variables for State
     val actionMessage by viewModel.actionMessage.collectAsState()
@@ -55,6 +57,18 @@ fun MainScreen(
                     thickness = DividerDefaults.Thickness,
                     color = DividerDefaults.color
                 )
+                if (userRole == "ADMIN") {
+                    NavigationDrawerItem(
+                        icon = { Icon(Icons.Default.AccountBalance, contentDescription = "Banco") },
+                        label = { Text("Bóveda del Banco") },
+                        selected = false,
+                        onClick = {
+                            coroutineScope.launch { drawerState.close() }
+                            onNavigateToBankVault()
+                        },
+                        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding)
+                    )
+                }
 
                 NavigationDrawerItem(
                     icon = { Icon(Icons.Default.Schedule, contentDescription = null) },
