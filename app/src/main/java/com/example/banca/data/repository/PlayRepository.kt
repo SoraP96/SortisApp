@@ -6,10 +6,16 @@ import com.example.banca.domain.models.PlayTicket
 
 class PlayRepository(private val playDao: PlayDao) {
 
-    // Esta función asíncrona (suspend) toma el ticket puro, lo convierte
-    // a una entidad de base de datos y lo guarda en la bóveda encriptada.
     suspend fun savePlay(ticket: PlayTicket): Long {
         val entity = ticket.toEntity()
         return playDao.insertPlay(entity)
     }
+
+    suspend fun getAllPlays() = playDao.getAllPlays()
+
+    suspend fun getPlaysByNumber(number: String) =
+        playDao.getPlaysByNumber(number)
+
+    suspend fun updatePrize(playId: Long, prize: Double) =
+        playDao.updatePrize(playId, prize)
 }

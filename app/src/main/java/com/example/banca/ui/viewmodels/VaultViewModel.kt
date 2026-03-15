@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.banca.data.database.DatabaseProvider
 import com.example.banca.data.repository.PlayRepository
+import com.example.banca.data.repository.ListRepository // NUEVO
 import com.example.banca.domain.models.PlayTicket
 import com.example.banca.domain.usecases.CalculateTicketUseCase
 import com.example.banca.domain.usecases.CheckLimitsUseCase
@@ -13,18 +14,32 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-// Cambiamos ViewModel() por AndroidViewModel(application) para tener contexto
+// Usamos AndroidViewModel para tener acceso al Context (Application)
 class VaultViewModel(application: Application) : AndroidViewModel(application) {
 
     private val calculateTicketUseCase = CalculateTicketUseCase()
     private val checkLimitsUseCase = CheckLimitsUseCase()
 
-    // NUEVO: Instanciamos el repositorio usando nuestro DatabaseProvider encriptado
+    // Repository de jugadas (ya lo tenías)
     private val repository: PlayRepository
 
+    // NUEVO: Repository de listas
+    private val listRepository: ListRepository
+
     init {
-        val dao = DatabaseProvider.getDatabase(application).playDao()
-        repository = PlayRepository(dao)
+
+        // CAMBIO: obtenemos UNA sola instancia de la base de datos
+        val database = DatabaseProvider.getDatabase(application)
+
+        // CAMBIO: obtenemos ambos DAO desde la misma base de datos
+        val playDao = database.playDao()
+        val listDao = database.listDao()
+
+        // Inicializamos ambos repositorios
+        repository = PlayRepository(playDao)
+
+        // NUEVO: inicializamos el repositorio de listas
+        listRepository = ListRepository(listDao)
     }
 
     private val _numberInput = MutableStateFlow("")
@@ -86,6 +101,7 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun registerPlay() {
+
         val amount = _amountInput.value.toDoubleOrNull() ?: return
 
         val isAllowed = checkLimitsUseCase.execute(
@@ -111,10 +127,18 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         )
 
         if (ticket != null) {
-            // NUEVO: Guardamos en la base de datos usando una corrutina
+
             viewModelScope.launch {
+
+                // NUEVO (preparado para el sistema de listas):
+                // aquí más adelante obtendremos la lista abierta
+
                 val insertedId = repository.savePlay(ticket)
+
                 println("¡ÉXITO! Ticket encriptado y guardado en SQLCipher con el ID: $insertedId")
+
+                // EJEMPLO FUTURO (aún no lo usamos):
+                // val openList = listRepository.getOpenList()
             }
         }
 

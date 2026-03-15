@@ -8,7 +8,7 @@ fun PlayTicket.toEntity(): PlayEntity {
     return PlayEntity(
         playNumber = this.playNumber,
         playType = this.playType,
-        totalAmount = this.totalAmount,
+        amount = this.amount,
         listeroCut = this.listeroCut,
         bankCleanMoney = this.bankCleanMoney
     )
