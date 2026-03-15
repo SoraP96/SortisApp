@@ -133,9 +133,18 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
                 // NUEVO (preparado para el sistema de listas):
                 // aquí más adelante obtendremos la lista abierta
 
-                val insertedId = repository.savePlay(ticket)
+                viewModelScope.launch {
 
-                println("¡ÉXITO! Ticket encriptado y guardado en SQLCipher con el ID: $insertedId")
+                    // 1 buscar lista activa
+                    val listId = getOrCreateActiveList()
+
+                    // 2 guardar jugada en esa lista
+                    val insertedId = repository.savePlay(ticket, listId)
+
+                    println("Play guardado en lista $listId con id $insertedId")
+                }
+
+                //println("¡ÉXITO! Ticket encriptado y guardado en SQLCipher con el ID: $insertedId")
 
                 // EJEMPLO FUTURO (aún no lo usamos):
                 // val openList = listRepository.getOpenList()
@@ -145,5 +154,21 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         _numberInput.value = ""
         _amountInput.value = ""
         _inputPhase.value = 0
+    }
+
+    private suspend fun getOrCreateActiveList(): Long {
+
+        val openList = listRepository.getOpenList()
+
+        return if (openList != null) {
+
+            openList.id
+
+        } else {
+
+            // crear nueva lista
+            listRepository.createList("DEFAULT")
+
+        }
     }
 }

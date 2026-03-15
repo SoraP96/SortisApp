@@ -8,23 +8,14 @@ data class PlayEntity(
 
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0,
-
-    val listId: Long? = null,
-
+    val listId: Long,
     val playNumber: String,
-
     val playType: String,
-
     val amount: Double,
-
     val listeroCut: Double,
-
     val bankCleanMoney: Double,
-
     val prize: Double? = null,
-
     val status: String = "ACTIVE",
-
     val timestamp: Long = System.currentTimeMillis()
 )
 
