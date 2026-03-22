@@ -19,4 +19,7 @@ class PlayRepository(private val playDao: PlayDao) {
 
     suspend fun updatePrize(playId: Long, prize: Double) =
         playDao.updatePrize(playId, prize)
+
+    suspend fun getPlaysByList(listId: Long) =
+        playDao.getPlaysByList(listId)
 }

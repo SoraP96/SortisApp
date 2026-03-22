@@ -31,4 +31,5 @@ class ListRepository(private val listDao: ListDao) {
     suspend fun closeList(listId: Long) {
         listDao.closeList(listId)
     }
+
 }

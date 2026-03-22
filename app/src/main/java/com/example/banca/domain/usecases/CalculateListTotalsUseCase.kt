@@ -1,10 +1,10 @@
 package com.example.banca.domain.usecases
 
-import com.example.banca.domain.models.PlayTicket
+import com.example.banca.data.entities.PlayEntity
 
 class CalculateListTotalsUseCase {
 
-    fun execute(plays: List<PlayTicket>): Triple<Double, Double, Double> {
+    fun execute(plays: List<PlayEntity>): Triple<Double, Double, Double> {
 
         val total = plays.sumOf { it.amount }
 

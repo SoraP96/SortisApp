@@ -20,4 +20,7 @@ interface PlayDao {
     @Query("UPDATE plays SET prize = :prize, status = 'PAID' WHERE id = :playId")
     suspend fun updatePrize(playId: Long, prize: Double)
 
+    @Query("SELECT * FROM plays WHERE listId = :listId")
+    suspend fun getPlaysByList(listId: Long): List<PlayEntity>
+
 }

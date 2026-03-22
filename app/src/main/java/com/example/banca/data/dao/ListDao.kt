@@ -25,4 +25,7 @@ interface ListDao {
     @Query("UPDATE lists SET status = 'CLOSED' WHERE id = :listId")
     suspend fun closeList(listId: Long)
 
+
 }
+
+
