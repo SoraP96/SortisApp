@@ -6,11 +6,14 @@ import com.example.banca.data.dao.PlayDao
 import com.example.banca.data.dao.ListDao
 import com.example.banca.data.entities.PlayEntity
 import com.example.banca.data.entities.ListEntity
+import com.example.banca.data.dao.ResultDao
+import com.example.banca.data.entities.ResultEntity
 
 @Database(
     entities = [
         PlayEntity::class,
-        ListEntity::class
+        ListEntity::class,
+        ResultEntity::class
     ],
     version = 2,
     exportSchema = false
@@ -20,4 +23,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun playDao(): PlayDao
 
     abstract fun listDao(): ListDao
+
+    abstract fun resultDao(): ResultDao
 }
+
