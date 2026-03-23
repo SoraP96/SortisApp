@@ -8,7 +8,7 @@ fun PlayTicket.toEntity(listId:Long): PlayEntity {
     return PlayEntity(
         listId = listId,
         playNumber = this.playNumber,
-        playType = this.playType,
+        playType = this.playType.name,
         amount = this.amount,
         listeroCut = this.listeroCut,
         bankCleanMoney = this.bankCleanMoney

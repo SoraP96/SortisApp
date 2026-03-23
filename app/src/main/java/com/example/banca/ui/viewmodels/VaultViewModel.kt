@@ -128,7 +128,6 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
 
         if (ticket != null) {
 
-            viewModelScope.launch {
 
                 // NUEVO (preparado para el sistema de listas):
                 // aquí más adelante obtendremos la lista abierta
@@ -148,7 +147,6 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
 
                 // EJEMPLO FUTURO (aún no lo usamos):
                 // val openList = listRepository.getOpenList()
-            }
         }
 
         _numberInput.value = ""

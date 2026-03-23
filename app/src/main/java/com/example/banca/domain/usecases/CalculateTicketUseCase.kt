@@ -1,6 +1,7 @@
 package com.example.banca.domain.usecases
 
 import com.example.banca.domain.models.PlayTicket
+import com.example.banca.domain.models.PlayType
 
 class CalculateTicketUseCase {
 
@@ -13,10 +14,21 @@ class CalculateTicketUseCase {
 
         return PlayTicket(
             playNumber = number,
-            playType = type,
+            playType =  mapToPlayType(type) ?: return null,
             amount = amount,
             listeroCut = listeroCut,
             bankCleanMoney = cleanMoney
         )
+    }
+
+    private fun mapToPlayType(type: String): PlayType? {
+        return when (type.lowercase()) {
+            "fijo" -> PlayType.FIJO
+            "centena" -> PlayType.CENTENA
+            "parle" -> PlayType.PARLE
+            "corrido" -> PlayType.CORRIDO
+            "candado" -> PlayType.CANDADO
+            else -> null
+        }
     }
 }
