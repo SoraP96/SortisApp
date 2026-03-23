@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import com.example.banca.domain.utils.PlayParser
 
 // Usamos AndroidViewModel para tener acceso al Context (Application)
 class VaultViewModel(application: Application) : AndroidViewModel(application) {
@@ -139,6 +140,9 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
 
                     // 2 guardar jugada en esa lista
                     val insertedId = repository.savePlay(ticket, listId)
+
+                    val parsed = PlayParser.parse(ticket.playNumber, ticket.playType)
+                    println("Parsed numbers: ${parsed.numbers}")
 
                     println("Play guardado en lista $listId con id $insertedId")
                 }
