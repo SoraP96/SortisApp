@@ -1,7 +1,5 @@
 package com.example.banca.ui.screens
 
-// ... (tus imports anteriores)
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,9 +15,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel // NUEVO IMPORT
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.banca.ui.components.SortisAppIcon
-import com.example.banca.ui.viewmodels.LoginViewModel // NUEVO IMPORT
+import com.example.banca.ui.viewmodels.LoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -169,7 +169,12 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         } else {
 
             // crear nueva lista
-            listRepository.createList("DEFAULT")
+            val currentShift = "DAY" // luego lo haremos dinámico
+
+            listRepository.createList(
+                listeroCode = "DEFAULT",
+                shift = currentShift
+            )
 
         }
     }

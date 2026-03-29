@@ -31,7 +31,8 @@ fun MainScreen(
     viewModel: MainViewModel = viewModel(),
     onNavigateToLimits: () -> Unit,
     onNavigateToVault: () -> Unit, // Navegación al teclado numérico
-    onNavigateToBankVault: () -> Unit
+    onNavigateToBankVault: () -> Unit,
+    onNavigateToLists: () -> Unit,
 ) {
     // English variables for State
     val actionMessage by viewModel.actionMessage.collectAsState()
@@ -202,6 +203,7 @@ fun MainScreen(
 
                 SeccionSimple(titulo = "Gestión de Listas") {
                     val listItems = listOf(
+                        "Listas" to Icons.Default.List,
                         "Enviadas" to Icons.Default.Send,
                         "Borradores" to Icons.Default.Drafts,
                         "Guardado" to Icons.Default.Save,
@@ -220,7 +222,13 @@ fun MainScreen(
                             BotonCircular(
                                 texto = name,
                                 icono = icon,
-                                onClick = { viewModel.registerAction("Listas: $name") } // Se restauró la acción correcta
+                                onClick = {
+                                    if (name == "Listas") {
+                                        onNavigateToLists()
+                                    } else {
+                                        viewModel.registerAction("Listas: $name")
+                                    }
+                                }
                             )
                         }
                     }

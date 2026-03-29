@@ -6,10 +6,12 @@ import com.example.banca.data.entities.ListEntity
 
 class ListRepository(private val listDao: ListDao) {
 
-    suspend fun createList(listeroCode: String): Long {
+    suspend fun createList(listeroCode: String, shift: String): Long {
 
         val list = ListEntity(
-            listeroCode = listeroCode
+            listeroCode = listeroCode,
+            date = System.currentTimeMillis(),
+            shift = shift
         )
 
         return listDao.insertList(list)
@@ -31,5 +33,11 @@ class ListRepository(private val listDao: ListDao) {
     suspend fun closeList(listId: Long) {
         listDao.closeList(listId)
     }
+
+    suspend fun getListsByDateAndShift(
+        start: Long,
+        end: Long,
+        shift: String
+    ) = listDao.getListsByDateAndShift(start, end, shift)
 
 }

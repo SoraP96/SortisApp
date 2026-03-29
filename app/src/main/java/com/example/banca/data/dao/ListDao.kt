@@ -25,6 +25,12 @@ interface ListDao {
     @Query("UPDATE lists SET status = 'CLOSED' WHERE id = :listId")
     suspend fun closeList(listId: Long)
 
+    @Query("""SELECT * FROM lists WHERE date BETWEEN :start AND :end AND shift = :shift""")
+    suspend fun getListsByDateAndShift(
+        start: Long,
+        end: Long,
+        shift: String
+    ): List<ListEntity>
 
 }
 

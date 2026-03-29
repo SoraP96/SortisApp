@@ -19,5 +19,8 @@ data class ListEntity(
 
     val status: String = "OPEN",
 
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = System.currentTimeMillis(),
+    val date: Long,
+    val shift: String //Day or Night
+
 )

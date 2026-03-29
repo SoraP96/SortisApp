@@ -30,11 +30,14 @@ fun AppNavigation() {
                 userRole = userRole,
                 onNavigateToLimits = { navController.navigate("limits") },
                 onNavigateToVault = { navController.navigate("vault") },
-                onNavigateToBankVault = { navController.navigate("bank_vault") }
+                onNavigateToBankVault = { navController.navigate("bank_vault") },
+                onNavigateToLists = { navController.navigate("lists") }
             )
         }
         composable("vault") { VaultScreen(onBack = { navController.popBackStack() }) }
         composable("limits") { LimitsScreen(onBack = { navController.popBackStack() }) }
         composable("bank_vault") { BankScreen(onBack = { navController.popBackStack() }) }
+        composable("lists") { ListSummaryScreen() }
     }
+
 }
