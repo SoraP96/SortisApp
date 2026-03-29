@@ -10,7 +10,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.banca.ui.viewmodels.ListViewModel
 
 @Composable
-fun ListSummaryScreen(viewModel: ListViewModel = viewModel()) {
+fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewModel = viewModel()) {
 
     val lists by viewModel.lists.collectAsState()
     val shift by viewModel.selectedShift.collectAsState()
@@ -103,9 +103,11 @@ fun ListSummaryScreen(viewModel: ListViewModel = viewModel()) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp),
-                    elevation = CardDefaults.cardElevation(2.dp)
+                    elevation = CardDefaults.cardElevation(2.dp),
+                    onClick = {
+                        onNavigateToDetail(list.id)
+                    }
                 ) {
-
                     Column(modifier = Modifier.padding(12.dp)) {
 
                         Text(
@@ -113,9 +115,12 @@ fun ListSummaryScreen(viewModel: ListViewModel = viewModel()) {
                             fontWeight = FontWeight.Bold
                         )
 
-                        // 🔥 datos informativos de la lista
                         Text("Fecha: ${list.date}")
                         Text("Turno: ${list.shift}")
+
+                        Spacer(modifier = Modifier.height(4.dp))
+
+                        Text("Tap para ver detalle")
                     }
                 }
             }

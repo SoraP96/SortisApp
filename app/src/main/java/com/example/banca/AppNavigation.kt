@@ -37,7 +37,17 @@ fun AppNavigation() {
         composable("vault") { VaultScreen(onBack = { navController.popBackStack() }) }
         composable("limits") { LimitsScreen(onBack = { navController.popBackStack() }) }
         composable("bank_vault") { BankScreen(onBack = { navController.popBackStack() }) }
-        composable("lists") { ListSummaryScreen() }
+        composable("lists") {
+            ListSummaryScreen(
+                onNavigateToDetail = { listId ->
+                    navController.navigate("list_detail/$listId")
+                }
+            )
+        }
+        composable("list_detail/{listId}") { backStackEntry ->
+            val listId = backStackEntry.arguments?.getString("listId")?.toLong() ?: 0L
+            ListDetailScreen(listId = listId)
+        }
     }
 
 }
