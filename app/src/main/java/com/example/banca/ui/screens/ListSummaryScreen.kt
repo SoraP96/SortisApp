@@ -74,7 +74,7 @@ fun ListSummaryScreen(viewModel: ListViewModel = viewModel()) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // 📊 RESUMEN REAL
+        // RESUMEN REAL
         Card(
             modifier = Modifier.fillMaxWidth(),
             elevation = CardDefaults.cardElevation(4.dp)
