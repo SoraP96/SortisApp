@@ -15,7 +15,7 @@ import com.example.banca.data.entities.ResultEntity
         ListEntity::class,
         ResultEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -26,4 +26,5 @@ abstract class AppDatabase : RoomDatabase() {
 
     abstract fun resultDao(): ResultDao
 }
+
 
