@@ -48,6 +48,7 @@ fun AppNavigation() {
             val listId = backStackEntry.arguments?.getString("listId")?.toLong() ?: 0L
             ListDetailScreen(listId = listId)
         }
+
     }
 
 }

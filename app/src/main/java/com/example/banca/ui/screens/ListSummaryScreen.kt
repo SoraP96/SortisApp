@@ -21,6 +21,9 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
     val totalPrize by viewModel.totalPrize.collectAsState()
     val bankNet by viewModel.bankNet.collectAsState()
 
+    val listeroGain by viewModel.listeroGain.collectAsState()
+
+
     LaunchedEffect(Unit) {
         viewModel.loadLists(selectedDate)
     }
@@ -87,6 +90,7 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
 
                 Text("Total jugado: $totalAmount")
                 Text("Premios: $totalPrize")
+                Text("Ganancia listero: $listeroGain")
                 Text("Banco: $bankNet")
             }
         }

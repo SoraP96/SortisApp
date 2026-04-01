@@ -71,6 +71,9 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
     private val _bankNet = MutableStateFlow(0.0)
     val bankNet: StateFlow<Double> = _bankNet
 
+    private val _listeroGain = MutableStateFlow(0.0)
+    val listeroGain: StateFlow<Double> = _listeroGain
+
     // =========================
     // CARGAR LISTAS + CALCULAR TOTALES
     // =========================
@@ -94,6 +97,7 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
             var amountSum = 0.0
             var prizeSum = 0.0
             var bankSum = 0.0
+            var listeroSum = 0.0
 
             loadedLists.forEach { list ->
 
@@ -103,12 +107,14 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
                     amountSum += play.amount
                     prizeSum += play.prize ?: 0.0
                     bankSum += play.bankCleanMoney
+                    listeroSum += play.listeroCut
                 }
             }
 
             _totalAmount.value = amountSum
             _totalPrize.value = prizeSum
             _bankNet.value = bankSum
+            _listeroGain.value = listeroSum
         }
     }
 

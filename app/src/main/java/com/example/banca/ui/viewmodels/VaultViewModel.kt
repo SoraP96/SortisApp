@@ -101,6 +101,26 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         _errorMessage.value = ""
     }
 
+    private fun getStartOfDay(date: Long): Long {
+        val cal = java.util.Calendar.getInstance()
+        cal.timeInMillis = date
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0)
+        cal.set(java.util.Calendar.MINUTE, 0)
+        cal.set(java.util.Calendar.SECOND, 0)
+        cal.set(java.util.Calendar.MILLISECOND, 0)
+        return cal.timeInMillis
+    }
+
+    private fun getEndOfDay(date: Long): Long {
+        val cal = java.util.Calendar.getInstance()
+        cal.timeInMillis = date
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 23)
+        cal.set(java.util.Calendar.MINUTE, 59)
+        cal.set(java.util.Calendar.SECOND, 59)
+        cal.set(java.util.Calendar.MILLISECOND, 999)
+        return cal.timeInMillis
+    }
+
     private fun registerPlay() {
 
         val amount = _amountInput.value.toDoubleOrNull() ?: return
@@ -160,22 +180,31 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
 
     private suspend fun getOrCreateActiveList(): Long {
 
-        val openList = listRepository.getOpenList()
+        val currentDate = System.currentTimeMillis()
+        val currentShift = "DAY" // luego dinámico
 
-        return if (openList != null) {
+        val startOfDay = getStartOfDay(currentDate)
+        val endOfDay = getEndOfDay(currentDate)
 
-            openList.id
+        val todayLists = listRepository.getListsByDateAndShift(
+            start = startOfDay,
+            end = endOfDay,
+            shift = currentShift
+        )
+
+        return if (todayLists.isNotEmpty()) {
+
+            // usar la lista del día actual
+            todayLists.first().id
 
         } else {
 
-            // crear nueva lista
-            val currentShift = "DAY" // luego lo haremos dinámico
-
+            // crear nueva lista del día
             listRepository.createList(
                 listeroCode = "DEFAULT",
                 shift = currentShift
             )
-
         }
     }
+
 }
