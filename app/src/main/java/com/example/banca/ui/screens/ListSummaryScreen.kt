@@ -8,13 +8,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.banca.ui.viewmodels.ListViewModel
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.rememberDatePickerState
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewModel = viewModel()) {
 
     val lists by viewModel.lists.collectAsState()
     val shift by viewModel.selectedShift.collectAsState()
     val selectedDate by viewModel.selectedDate.collectAsState()
+    var showDatePicker by remember { mutableStateOf(false) }
 
     // 🔥 TOTALES REALES desde ViewModel
     val totalAmount by viewModel.totalAmount.collectAsState()
@@ -40,7 +45,45 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
 
         // 📅 FECHA
         Text("Fecha actual", fontWeight = FontWeight.Bold)
-        Text(selectedDate.toString()) // luego lo pondremos bonito
+
+        Button(
+            onClick = { showDatePicker = true }
+        ) {
+            Text("Seleccionar fecha")
+        }
+
+        if (showDatePicker) {
+
+            val datePickerState = rememberDatePickerState(
+                initialSelectedDateMillis = selectedDate
+            )
+
+            DatePickerDialog(
+                onDismissRequest = { showDatePicker = false },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            datePickerState.selectedDateMillis?.let {
+                                viewModel.setDate(it)
+                            }
+                            showDatePicker = false
+                        }
+                    ) {
+                        Text("Aceptar")
+                    }
+                },
+                dismissButton = {
+                    Button(
+                        onClick = { showDatePicker = false }
+                    ) {
+                        Text("Cancelar")
+                    }
+                }
+            ) {
+                DatePicker(state = datePickerState)
+            }
+        }
+
 
         Spacer(modifier = Modifier.height(8.dp))
 

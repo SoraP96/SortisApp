@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
+import androidx.compose.material3.CheckboxDefaults.colors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -56,7 +57,15 @@ fun ListDetailScreen(
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 4.dp)
+                        .padding(vertical = 4.dp),
+                    elevation = CardDefaults.cardElevation(2.dp),
+                    colors = CardDefaults.cardColors(
+                        containerColor =
+                            if ((play.prize ?: 0.0) > 0)
+                                MaterialTheme.colorScheme.primaryContainer
+                            else
+                                MaterialTheme.colorScheme.surface
+                    )
                 ) {
                     Column(modifier = Modifier.padding(12.dp)) {
 
@@ -67,7 +76,17 @@ fun ListDetailScreen(
 
                         Text("Tipo: ${play.playType}")
                         Text("Monto: ${play.amount}")
-                        Text("Premio: ${play.prize ?: 0.0}")
+
+                        val prize = play.prize ?: 0.0
+
+                        if (prize > 0) {
+                            Text(
+                                text = "🏆 Premio: $prize",
+                                fontWeight = FontWeight.Bold
+                            )
+                        } else {
+                            Text("Sin premio")
+                        }
                     }
                 }
             }

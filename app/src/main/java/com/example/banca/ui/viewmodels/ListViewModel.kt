@@ -106,7 +106,7 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
                 plays.forEach { play ->
                     amountSum += play.amount
                     prizeSum += play.prize ?: 0.0
-                    bankSum += play.bankCleanMoney
+                    bankSum += play.bankCleanMoney - (play.prize ?: 0.0)
                     listeroSum += play.listeroCut
                 }
             }
