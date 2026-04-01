@@ -25,7 +25,32 @@ class ListDetailViewModel(application: Application) : AndroidViewModel(applicati
 
     fun loadPlays(listId: Long) {
         viewModelScope.launch {
-            _plays.value = playRepository.getPlaysByList(listId)
+
+            val loadedPlays = playRepository.getPlaysByList(listId)
+
+            val pick3 = "260"
+            val pick4 = "2221"
+
+            val updatedPlays = loadedPlays.map { play ->
+
+                val prize = when {
+
+                    play.playType == "FIJO" &&
+                            play.playNumber == pick3.takeLast(2) -> play.amount * 75
+
+                    play.playType == "PARLE" &&
+                            play.playNumber == pick4 -> play.amount * 1200
+
+                    play.playType == "CORRIDO" &&
+                            pick3.contains(play.playNumber) -> play.amount * 25
+
+                    else -> 0.0
+                }
+
+                play.copy(prize = prize)
+            }
+
+            _plays.value = updatedPlays
         }
     }
 }
