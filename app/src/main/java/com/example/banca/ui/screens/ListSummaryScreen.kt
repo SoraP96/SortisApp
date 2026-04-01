@@ -29,7 +29,7 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
     val listeroGain by viewModel.listeroGain.collectAsState()
 
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(selectedDate, shift) {
         viewModel.loadLists(selectedDate)
     }
 

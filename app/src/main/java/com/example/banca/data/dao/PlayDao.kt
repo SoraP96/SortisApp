@@ -22,4 +22,5 @@ interface PlayDao {
 
     @Query("SELECT * FROM plays WHERE listId = :listId")
     suspend fun getPlaysByList(listId: Long): List<PlayEntity>
+
 }

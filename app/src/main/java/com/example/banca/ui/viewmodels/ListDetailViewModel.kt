@@ -47,6 +47,11 @@ class ListDetailViewModel(application: Application) : AndroidViewModel(applicati
                     else -> 0.0
                 }
 
+                // 🔥 guardar premio real en DB
+                if (prize > 0 && (play.prize ?: 0.0) == 0.0) {
+                    playRepository.savePrize(play.id, prize)
+                }
+
                 play.copy(prize = prize)
             }
 
