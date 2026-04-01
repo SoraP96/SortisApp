@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.example.banca.domain.utils.PlayParser
+import com.example.banca.domain.utils.ShiftUtils
 
 // Usamos AndroidViewModel para tener acceso al Context (Application)
 class VaultViewModel(application: Application) : AndroidViewModel(application) {
@@ -131,6 +132,12 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
             newAmount = amount
         )
 
+        if (ShiftUtils.isBettingLocked()) {
+            _errorMessage.value =
+                "Las jugadas están bloqueadas"
+            return
+        }
+
         if (!isAllowed) {
             _errorMessage.value = "¡Límite superado para el número ${_numberInput.value}!"
             _inputPhase.value = 0
@@ -181,7 +188,7 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
     private suspend fun getOrCreateActiveList(): Long {
 
         val currentDate = System.currentTimeMillis()
-        val currentShift = "DAY" // luego dinámico
+        val currentShift = ShiftUtils.getCurrentShift()
 
         val startOfDay = getStartOfDay(currentDate)
         val endOfDay = getEndOfDay(currentDate)

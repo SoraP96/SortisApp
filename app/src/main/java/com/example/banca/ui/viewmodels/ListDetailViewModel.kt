@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.banca.data.database.DatabaseProvider
 import com.example.banca.data.entities.PlayEntity
 import com.example.banca.data.repository.PlayRepository
+import com.example.banca.domain.utils.ShiftUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -56,6 +57,15 @@ class ListDetailViewModel(application: Application) : AndroidViewModel(applicati
             }
 
             _plays.value = updatedPlays
+        }
+    }
+
+    fun deletePlay(playId: Long, listId: Long) {
+        if (ShiftUtils.isBettingLocked()) return
+
+        viewModelScope.launch {
+            playRepository.deletePlay(playId)
+            loadPlays(listId)
         }
     }
 }

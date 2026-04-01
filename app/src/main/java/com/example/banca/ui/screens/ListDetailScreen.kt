@@ -88,6 +88,13 @@ fun ListDetailScreen(
                             Text("Sin premio")
                         }
                     }
+                    Button(
+                        onClick = {
+                            viewModel.deletePlay(play.id, listId)
+                        }
+                    ) {
+                        Text("Eliminar")
+                    }
                 }
             }
         }

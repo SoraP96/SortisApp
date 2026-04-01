@@ -26,4 +26,8 @@ class PlayRepository(private val playDao: PlayDao) {
     suspend fun savePrize(playId: Long, prize: Double) {
         playDao.updatePrize(playId, prize)
     }
+
+    suspend fun deletePlay(playId: Long) {
+        playDao.deletePlay(playId)
+    }
 }

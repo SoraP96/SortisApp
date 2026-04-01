@@ -23,4 +23,6 @@ interface PlayDao {
     @Query("SELECT * FROM plays WHERE listId = :listId")
     suspend fun getPlaysByList(listId: Long): List<PlayEntity>
 
+    @Query("DELETE FROM plays WHERE id = :playId")
+    suspend fun deletePlay(playId: Long)
 }
