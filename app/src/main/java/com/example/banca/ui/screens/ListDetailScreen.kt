@@ -11,6 +11,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.banca.ui.viewmodels.ListDetailViewModel
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PictureAsPdf
 
 @Composable
 fun ListDetailScreen(
@@ -23,6 +25,17 @@ fun ListDetailScreen(
     LaunchedEffect(listId) {
         viewModel.loadPlays(listId)
     }
+    //Para exportar a PDF
+/*
+    IconButton(
+        onClick = {
+            viewModel.exportListPdf(listId)
+        }
+    ) {
+        Icon(Icons.Default.PictureAsPdf, null)
+    }
+    */
+
 
     Column(
         modifier = Modifier
@@ -74,7 +87,7 @@ fun ListDetailScreen(
 
         LazyColumn {
             items(plays) { play ->
-
+                var showDeleteDialog by remember { mutableStateOf(false) }
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -113,14 +126,48 @@ fun ListDetailScreen(
 
                         Button(
                             onClick = {
-                                viewModel.deletePlay(play.id, listId)
+                                showDeleteDialog = true
                             }
                         ) {
                             Text("Eliminar")
                         }
+                        if (showDeleteDialog) {
+                            AlertDialog(
+                                onDismissRequest = {
+                                    showDeleteDialog = false
+                                },
+                                title = {
+                                    Text("Confirmar eliminación")
+                                },
+                                text = {
+                                    Text("¿Seguro que deseas eliminar esta jugada?")
+                                },
+                                confirmButton = {
+                                    Button(
+                                        onClick = {
+                                            viewModel.deletePlay(play.id, listId)
+                                            showDeleteDialog = false
+                                        }
+                                    ) {
+                                        Text("Sí, eliminar")
+                                    }
+                                },
+                                dismissButton = {
+                                    OutlinedButton(
+                                        onClick = {
+                                            showDeleteDialog = false
+                                        }
+                                    ) {
+                                        Text("Cancelar")
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
             }
+
         }
     }
+
 }

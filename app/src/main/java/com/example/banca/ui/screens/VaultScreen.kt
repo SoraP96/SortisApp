@@ -3,6 +3,7 @@ package com.example.banca.ui.screens
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -32,6 +33,7 @@ fun VaultScreen(
     val tipo by viewModel.playType.collectAsState()
     val fase by viewModel.inputPhase.collectAsState()
     val error by viewModel.errorMessage.collectAsState()
+
 
     Scaffold(
         topBar = {
@@ -130,6 +132,28 @@ fun VaultScreen(
             }
 
             Spacer(modifier = Modifier.height(16.dp))
+
+            val currentShift by viewModel.currentShift.collectAsState()
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp),
+                horizontalArrangement = Arrangement.Center
+            ){
+                LaunchedEffect(Unit) {
+                    viewModel.refreshCurrentShift()
+                }
+
+                Text(
+                    text = if (currentShift == "Mañana")
+                        "🌞 Tirada de mañana"
+                    else
+                        "🌙 Tirada de tarde",
+                    style = MaterialTheme.typography.titleLarge
+                )
+            }
+
+
 
             // 3. TECLADO NUMÉRICO GIGANTE
             Column(

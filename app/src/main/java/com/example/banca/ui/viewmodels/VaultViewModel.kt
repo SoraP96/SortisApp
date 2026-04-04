@@ -16,8 +16,11 @@ import kotlinx.coroutines.launch
 import com.example.banca.domain.utils.PlayParser
 import com.example.banca.domain.utils.ShiftUtils
 
+
 // Usamos AndroidViewModel para tener acceso al Context (Application)
 class VaultViewModel(application: Application) : AndroidViewModel(application) {
+
+
 
     private val calculateTicketUseCase = CalculateTicketUseCase()
     private val checkLimitsUseCase = CheckLimitsUseCase()
@@ -44,6 +47,12 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         listRepository = ListRepository(listDao)
     }
 
+    private val _currentShift = MutableStateFlow(
+        ShiftUtils.getCurrentShift()
+    )
+    val currentShift: StateFlow<String> =
+        _currentShift.asStateFlow()
+
     private val _numberInput = MutableStateFlow("")
     val numberInput: StateFlow<String> = _numberInput.asStateFlow()
 
@@ -58,6 +67,10 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _errorMessage = MutableStateFlow("")
     val errorMessage: StateFlow<String> = _errorMessage.asStateFlow()
+
+    fun refreshCurrentShift() {
+        _currentShift.value = ShiftUtils.getCurrentShift()
+    }
 
     fun onKeyPressed(key: String) {
         if (_inputPhase.value == 0) {

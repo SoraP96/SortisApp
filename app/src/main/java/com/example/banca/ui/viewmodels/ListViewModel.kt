@@ -38,7 +38,7 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
     // =========================
     // TURNO
     // =========================
-    private val _selectedShift = MutableStateFlow("DAY")
+    private val _selectedShift = MutableStateFlow("Mañana")
     val selectedShift: StateFlow<String> = _selectedShift
 
     fun setShift(shift: String) {
