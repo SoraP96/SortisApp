@@ -11,6 +11,8 @@ import com.example.banca.ui.viewmodels.ListViewModel
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.rememberDatePickerState
+import java.text.SimpleDateFormat
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,6 +30,11 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
 
     val listeroGain by viewModel.listeroGain.collectAsState()
 
+
+    val formattedDate = remember(selectedDate) {
+        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            .format(Date(selectedDate))
+    }
 
     LaunchedEffect(selectedDate, shift) {
         viewModel.loadLists(selectedDate)
@@ -90,10 +97,10 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
         // 🌙 TURNO
         Row {
             Button(
-                onClick = { viewModel.setShift("DAY") },
+                onClick = { viewModel.setShift("Mañana") },
                 colors = ButtonDefaults.buttonColors(
                     containerColor =
-                        if (shift == "DAY")
+                        if (shift == "Mañana")
                             MaterialTheme.colorScheme.primary
                         else
                             MaterialTheme.colorScheme.secondary
@@ -105,10 +112,10 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
             Spacer(modifier = Modifier.width(8.dp))
 
             Button(
-                onClick = { viewModel.setShift("NIGHT") },
+                onClick = { viewModel.setShift("Noche") },
                 colors = ButtonDefaults.buttonColors(
                     containerColor =
-                        if (shift == "NIGHT")
+                        if (shift == "Noche")
                             MaterialTheme.colorScheme.primary
                         else
                             MaterialTheme.colorScheme.secondary
@@ -162,7 +169,7 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
                             fontWeight = FontWeight.Bold
                         )
 
-                        Text("Fecha: ${list.date}")
+                        Text("Fecha: ${formattedDate}")
                         Text("Turno: ${list.shift}")
 
                         Spacer(modifier = Modifier.height(4.dp))

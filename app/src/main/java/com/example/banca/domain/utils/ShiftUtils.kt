@@ -13,9 +13,9 @@ object ShiftUtils {
         val totalMinutes = hour * 60 + minute
 
         return if (totalMinutes < (13 * 60 + 30)) {
-            "DAY"
+            "Mañana"
         } else {
-            "NIGHT"
+            "Noche"
         }
     }
 
