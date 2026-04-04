@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.material3.CheckboxDefaults.colors
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -40,12 +39,34 @@ fun ListDetailScreen(
 
         // 🔥 números ganadores (temporal)
         Card(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(4.dp)
         ) {
-            Column(modifier = Modifier.padding(12.dp)) {
-                Text("Números Lotto", fontWeight = FontWeight.Bold)
+            Column(modifier = Modifier.padding(16.dp)) {
+
+                Text(
+                    "Resultados Lotto",
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Text("Pick3: 260")
                 Text("Pick4: 2221")
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                val totalPlayed = plays.sumOf { it.amount }
+                val totalPrizes = plays.sumOf { it.prize ?: 0.0 }
+                val bankNet = plays.sumOf {
+                    it.bankCleanMoney - (it.prize ?: 0.0)
+                }
+                val listeroNet = plays.sumOf { it.listeroCut }
+
+                Text("Total jugado: $totalPlayed")
+                Text("Premios: $totalPrizes")
+                Text("Banco: $bankNet")
+                Text("Listero: $listeroNet")
             }
         }
 
@@ -87,13 +108,16 @@ fun ListDetailScreen(
                         } else {
                             Text("Sin premio")
                         }
-                    }
-                    Button(
-                        onClick = {
-                            viewModel.deletePlay(play.id, listId)
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Button(
+                            onClick = {
+                                viewModel.deletePlay(play.id, listId)
+                            }
+                        ) {
+                            Text("Eliminar")
                         }
-                    ) {
-                        Text("Eliminar")
                     }
                 }
             }
