@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.banca.ui.viewmodels.ListDetailViewModel
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.PictureAsPdf
 import com.example.banca.domain.utils.PdfExporter
 import android.content.Intent
 import android.widget.Toast

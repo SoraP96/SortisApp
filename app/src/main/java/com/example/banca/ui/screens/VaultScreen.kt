@@ -82,7 +82,7 @@ fun VaultScreen(
                     ) {
                         // Muestra el número
                         Text(
-                            text = if (numero.isEmpty()) "--" else numero,
+                            text = if (numero.isEmpty()) "---" else numero,
                             fontSize = 48.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (fase == 0) Color.White else Color.Gray
