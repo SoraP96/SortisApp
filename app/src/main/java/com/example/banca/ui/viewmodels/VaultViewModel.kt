@@ -74,7 +74,13 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
 
     fun onKeyPressed(key: String) {
         if (_inputPhase.value == 0) {
-            val charLimit = if (_playType.value == "Parle") 4 else 2
+            val charLimit = when (_playType.value) {
+                "Parle" -> 4
+                "Centena" -> 3
+                "Fijo" -> 2
+                "Corrido" -> 2
+                else -> 2
+            }
             if (_numberInput.value.length < charLimit) {
                 _numberInput.value += key
             }
@@ -101,9 +107,20 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
 
     fun onNextPhase() {
         if (_inputPhase.value == 0 && _numberInput.value.isNotEmpty()) {
-            if (_playType.value == "Parle" && _numberInput.value.length < 4) return
+
+            val requiredLength = when (_playType.value) {
+                "Parle" -> 4
+                "Centena" -> 3
+                else -> 2
+            }
+
+            if (_numberInput.value.length < requiredLength) return
+
             _inputPhase.value = 1
-        } else if (_inputPhase.value == 1 && _amountInput.value.isNotEmpty()) {
+
+        } else if (_inputPhase.value == 1 &&
+            _amountInput.value.isNotEmpty()
+        ) {
             registerPlay()
         }
     }

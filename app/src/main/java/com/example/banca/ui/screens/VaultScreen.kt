@@ -127,6 +127,7 @@ fun VaultScreen(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 BotonTipoJugada("Fijo", tipo == "Fijo") { viewModel.changePlayType("Fijo") }
+                BotonTipoJugada("Centena", tipo == "Centena") { viewModel.changePlayType("Centena") }
                 BotonTipoJugada("Corrido", tipo == "Corrido") { viewModel.changePlayType("Corrido") }
                 BotonTipoJugada("Parle", tipo == "Parle") { viewModel.changePlayType("Parle") }
             }
