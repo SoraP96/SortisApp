@@ -19,6 +19,9 @@ import android.widget.Toast
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.FileProvider
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import java.io.FileInputStream
 
 @Composable
 fun ListDetailScreen(
@@ -28,6 +31,30 @@ fun ListDetailScreen(
 
     val plays by viewModel.plays.collectAsState()
     val context = LocalContext.current
+    val savePdfLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("application/pdf")
+    ) { uri ->
+
+        uri?.let {
+            val tempFile = generarPdfConResumen(
+                context,
+                listId,
+                plays
+            )
+
+            context.contentResolver.openOutputStream(uri)?.use { output ->
+                FileInputStream(tempFile).use { input ->
+                    input.copyTo(output)
+                }
+            }
+
+            Toast.makeText(
+                context,
+                "PDF guardado correctamente",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
     var expandedMenu by remember { mutableStateOf(false) }
 
     LaunchedEffect(listId) {
@@ -93,15 +120,11 @@ fun ListDetailScreen(
                         }
                     )
                     DropdownMenuItem(
-                        text = { Text("Guardar en teléfono") },
+                        text = { Text("Guardar como...") },
                         onClick = {
                             expandedMenu = false
 
-                            generarPdfConResumen(
-                                context,
-                                listId,
-                                plays
-                            )
+                            savePdfLauncher.launch("Lista_$listId.pdf")
 
                             Toast.makeText(
                                 context,
