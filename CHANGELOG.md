@@ -1,3 +1,11 @@
+
+* ## v0.5.1 - Exportación PDF mejorada
+- compartir PDF
+- guardar como...
+- ruta elegida por usuario
+- resumen financiero incluido
+- corrección crash FileProvider
+
 ## v0.5 - Summary & PDF improvements
 * fecha actual visible en summary
 * importes sin decimales
@@ -7,7 +15,6 @@
 * banco
 * listero
 * guardado físico en teléfono
-
 
 ## v0.4 - Exportación PDF
 - Exportación de listas a PDF
