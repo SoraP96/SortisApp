@@ -40,4 +40,36 @@ class ListRepository(private val listDao: ListDao) {
         shift: String
     ) = listDao.getListsByDateAndShift(start, end, shift)
 
+    fun isListEditable(list: ListEntity): Boolean {
+
+        val today = System.currentTimeMillis()
+
+        val startOfDay = getStartOfDay(today)
+        val endOfDay = getEndOfDay(today)
+
+        val isToday = list.date in startOfDay..endOfDay
+
+        return list.status == "OPEN" && isToday
+    }
+
+    private fun getStartOfDay(date: Long): Long {
+        val cal = java.util.Calendar.getInstance()
+        cal.timeInMillis = date
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 0)
+        cal.set(java.util.Calendar.MINUTE, 0)
+        cal.set(java.util.Calendar.SECOND, 0)
+        cal.set(java.util.Calendar.MILLISECOND, 0)
+        return cal.timeInMillis
+    }
+
+    private fun getEndOfDay(date: Long): Long {
+        val cal = java.util.Calendar.getInstance()
+        cal.timeInMillis = date
+        cal.set(java.util.Calendar.HOUR_OF_DAY, 23)
+        cal.set(java.util.Calendar.MINUTE, 59)
+        cal.set(java.util.Calendar.SECOND, 59)
+        cal.set(java.util.Calendar.MILLISECOND, 999)
+        return cal.timeInMillis
+    }
+
 }

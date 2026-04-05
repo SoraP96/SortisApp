@@ -232,12 +232,18 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
 
         return if (todayLists.isNotEmpty()) {
 
-            // usar la lista del día actual
-            todayLists.first().id
+            val activeList = todayLists.first()
+
+            if (!listRepository.isListEditable(activeList)) {
+                throw IllegalStateException(
+                    "La lista está cerrada o pertenece a otro día"
+                )
+            }
+
+            activeList.id
 
         } else {
 
-            // crear nueva lista del día
             listRepository.createList(
                 listeroCode = "DEFAULT",
                 shift = currentShift

@@ -212,13 +212,16 @@ fun ListDetailScreen(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Button(
-                            onClick = {
-                                showDeleteDialog = true
+                        if (viewModel.isCurrentListEditable()) {
+                            Button(
+                                onClick = {
+                                    showDeleteDialog = true
+                                }
+                            ) {
+                                Text("Eliminar")
                             }
-                        ) {
-                            Text("Eliminar")
                         }
+
                         if (showDeleteDialog) {
                             AlertDialog(
                                 onDismissRequest = {

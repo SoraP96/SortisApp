@@ -72,4 +72,8 @@ class ListDetailViewModel(application: Application) : AndroidViewModel(applicati
             loadPlays(listId)
         }
     }
+
+    fun isCurrentListEditable(): Boolean {
+        return !ShiftUtils.isBettingLocked()
+    }
 }
