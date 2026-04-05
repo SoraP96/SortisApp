@@ -139,10 +139,10 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
 
                 Spacer(modifier = Modifier.height(4.dp))
 
-                Text("Total jugado: $totalAmount")
-                Text("Premios: $totalPrize")
-                Text("Ganancia listero: $listeroGain")
-                Text("Ganancia Banco: $bankNet")
+                Text("Total jugado: ${"%0.f".format(totalAmount)}")
+                Text("Premios: ${"%.0f".format(totalPrize)}")
+                Text("Ganancia listero: ${"%.0f".format(listeroGain)}")
+                Text("Ganancia Banco: ${"%.0f".format(bankNet)}")
             }
         }
 

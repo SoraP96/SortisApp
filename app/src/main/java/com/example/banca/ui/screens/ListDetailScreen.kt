@@ -69,23 +69,10 @@ fun ListDetailScreen(
                         onClick = {
                             expandedMenu = false
 
-                            val totalPlayed = plays.sumOf { it.amount }
-                            val totalPrizes = plays.sumOf { it.prize ?: 0.0 }
-                            val bankNet = plays.sumOf {
-                                it.bankCleanMoney - (it.prize ?: 0.0)
-                            }
-                            val listeroNet = plays.sumOf { it.listeroCut }
-
-                            val file = PdfExporter.exportarLista(
-                                context = context,
-                                titulo = "Lista_$listId",
-                                elementos = plays.map {
-                                    "${it.playNumber} - ${it.playType} - ${it.amount}"
-                                },
-                                totalJugado = totalPlayed,
-                                premios = totalPrizes,
-                                banco = bankNet,
-                                listero = listeroNet
+                            val file = generarPdfConResumen(
+                                context,
+                                listId,
+                                plays
                             )
 
                             val uri = FileProvider.getUriForFile(
@@ -103,18 +90,24 @@ fun ListDetailScreen(
                             context.startActivity(
                                 Intent.createChooser(intent, "Compartir PDF")
                             )
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Guardar en teléfono") },
+                        onClick = {
+                            expandedMenu = false
+
+                            generarPdfConResumen(
+                                context,
+                                listId,
+                                plays
+                            )
 
                             Toast.makeText(
                                 context,
-                                "PDF exportado correctamente",
+                                "PDF guardado en el teléfono",
                                 Toast.LENGTH_SHORT
                             ).show()
-                        },
-                        leadingIcon = {
-                            Icon(
-                                Icons.Default.PictureAsPdf,
-                                contentDescription = null
-                            )
                         }
                     )
                 }
@@ -242,5 +235,30 @@ fun ListDetailScreen(
 
         }
     }
+}
 
+private fun generarPdfConResumen(
+    context: android.content.Context,
+    listId: Long,
+    plays: List<com.example.banca.data.entities.PlayEntity>
+): java.io.File {
+
+    val totalPlayed = plays.sumOf { it.amount }
+    val totalPrizes = plays.sumOf { it.prize ?: 0.0 }
+    val bankNet = plays.sumOf {
+        it.bankCleanMoney - (it.prize ?: 0.0)
+    }
+    val listeroNet = plays.sumOf { it.listeroCut }
+
+    return PdfExporter.exportarLista(
+        context = context,
+        titulo = "Lista_$listId",
+        elementos = plays.map {
+            "${it.playNumber} - ${it.playType} - ${it.amount}"
+        },
+        totalJugado = totalPlayed,
+        premios = totalPrizes,
+        banco = bankNet,
+        listero = listeroNet
+    )
 }
