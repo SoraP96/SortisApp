@@ -69,12 +69,23 @@ fun ListDetailScreen(
                         onClick = {
                             expandedMenu = false
 
+                            val totalPlayed = plays.sumOf { it.amount }
+                            val totalPrizes = plays.sumOf { it.prize ?: 0.0 }
+                            val bankNet = plays.sumOf {
+                                it.bankCleanMoney - (it.prize ?: 0.0)
+                            }
+                            val listeroNet = plays.sumOf { it.listeroCut }
+
                             val file = PdfExporter.exportarLista(
                                 context = context,
                                 titulo = "Lista_$listId",
                                 elementos = plays.map {
                                     "${it.playNumber} - ${it.playType} - ${it.amount}"
-                                }
+                                },
+                                totalJugado = totalPlayed,
+                                premios = totalPrizes,
+                                banco = bankNet,
+                                listero = listeroNet
                             )
 
                             val uri = FileProvider.getUriForFile(
@@ -120,7 +131,7 @@ fun ListDetailScreen(
             Column(modifier = Modifier.padding(16.dp)) {
 
                 Text(
-                    "Resultados Lotto",
+                    "Tiradas",
                     fontWeight = FontWeight.Bold
                 )
 
@@ -138,10 +149,10 @@ fun ListDetailScreen(
                 }
                 val listeroNet = plays.sumOf { it.listeroCut }
 
-                Text("Total jugado: $totalPlayed")
-                Text("Premios: $totalPrizes")
-                Text("Banco: $bankNet")
-                Text("Listero: $listeroNet")
+                Text("Total jugado: ${"%.0f".format(totalPlayed)}")
+                Text("Premios: ${"%.0f".format(totalPrizes)}")
+                Text("Ganancia Banco: ${"%.0f".format(bankNet)}")
+                Text("Ganacia Listero: ${"%.0f".format(listeroNet)}")
             }
         }
 
@@ -171,7 +182,7 @@ fun ListDetailScreen(
                         )
 
                         Text("Tipo: ${play.playType}")
-                        Text("Monto: ${play.amount}")
+                        Text("Jugado: ${"%.0f".format(play.amount)}")
 
                         val prize = play.prize ?: 0.0
 

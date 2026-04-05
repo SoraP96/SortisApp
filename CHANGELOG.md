@@ -1,3 +1,13 @@
+## v0.5 - Summary & PDF improvements
+* fecha actual visible en summary
+* importes sin decimales
+* PDF con resumen financiero
+* total jugado
+* premios
+* banco
+* listero
+* guardado físico en teléfono
+
 
 ## v0.4 - Exportación PDF
 - Exportación de listas a PDF

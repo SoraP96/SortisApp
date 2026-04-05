@@ -12,7 +12,8 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.rememberDatePickerState
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +57,7 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
         Button(
             onClick = { showDatePicker = true }
         ) {
-            Text("Seleccionar fecha")
+            Text("$formattedDate")
         }
 
         if (showDatePicker) {
@@ -141,7 +142,7 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
                 Text("Total jugado: $totalAmount")
                 Text("Premios: $totalPrize")
                 Text("Ganancia listero: $listeroGain")
-                Text("Banco: $bankNet")
+                Text("Ganancia Banco: $bankNet")
             }
         }
 
