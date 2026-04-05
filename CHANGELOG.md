@@ -1,4 +1,11 @@
 
+## v0.6 - Seguridad listas
+- bloqueo de listas cerradas
+- bloqueo de listas antiguas
+- eliminación solo en listas abiertas
+- validación por fecha y turno
+- mejoras de seguridad en detalle
+
 * ## v0.5.1 - Exportación PDF mejorada
 - compartir PDF
 - guardar como...

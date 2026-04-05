@@ -29,6 +29,11 @@ fun ListDetailScreen(
 ) {
 
     val plays by viewModel.plays.collectAsState()
+    var isEditable by remember { mutableStateOf(false) }
+
+    LaunchedEffect(listId) {
+        isEditable = viewModel.isCurrentListEditable(listId)
+    }
     val context = LocalContext.current
     val savePdfLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.CreateDocument("application/pdf")
@@ -212,7 +217,7 @@ fun ListDetailScreen(
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        if (viewModel.isCurrentListEditable()) {
+                        if (isEditable) {
                             Button(
                                 onClick = {
                                     showDeleteDialog = true

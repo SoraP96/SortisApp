@@ -11,14 +11,17 @@ import com.example.banca.domain.utils.ShiftUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import com.example.banca.data.repository.ListRepository
 
 class ListDetailViewModel(application: Application) : AndroidViewModel(application) {
 
     private val playRepository: PlayRepository
+    private val listRepository: ListRepository
 
     init {
         val db = DatabaseProvider.getDatabase(application)
         playRepository = PlayRepository(db.playDao())
+        listRepository = ListRepository(db.listDao())
     }
 
     private val _plays = MutableStateFlow<List<PlayEntity>>(emptyList())
@@ -73,7 +76,35 @@ class ListDetailViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    fun isCurrentListEditable(): Boolean {
-        return !ShiftUtils.isBettingLocked()
+    suspend fun isCurrentListEditable(listId: Long): Boolean {
+
+        val currentDate = System.currentTimeMillis()
+
+        val calStart = java.util.Calendar.getInstance().apply {
+            timeInMillis = currentDate
+            set(java.util.Calendar.HOUR_OF_DAY, 0)
+            set(java.util.Calendar.MINUTE, 0)
+            set(java.util.Calendar.SECOND, 0)
+            set(java.util.Calendar.MILLISECOND, 0)
+        }
+
+        val calEnd = java.util.Calendar.getInstance().apply {
+            timeInMillis = currentDate
+            set(java.util.Calendar.HOUR_OF_DAY, 23)
+            set(java.util.Calendar.MINUTE, 59)
+            set(java.util.Calendar.SECOND, 59)
+            set(java.util.Calendar.MILLISECOND, 999)
+        }
+
+        val lists = listRepository.getListsByDateAndShift(
+            start = calStart.timeInMillis,
+            end = calEnd.timeInMillis,
+            shift = ShiftUtils.getCurrentShift()
+        )
+
+        val currentList = lists.find { it.id == listId }
+            ?: return false
+
+        return currentList.status == "OPEN"
     }
 }
