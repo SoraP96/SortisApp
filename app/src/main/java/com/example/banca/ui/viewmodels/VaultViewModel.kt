@@ -139,25 +139,43 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
 
         val amount = _amountInput.value.toDoubleOrNull() ?: return
 
-        val isAllowed = checkLimitsUseCase.execute(
-            number = _numberInput.value,
-            playType = _playType.value,
-            newAmount = amount
-        )
-
         if (ShiftUtils.isBettingLocked()) {
-            _errorMessage.value =
-                "Las jugadas están bloqueadas"
+            _errorMessage.value = "Las jugadas están bloqueadas"
             return
         }
 
-        if (!isAllowed) {
-            _errorMessage.value = "¡Límite superado para el número ${_numberInput.value}!"
-            _inputPhase.value = 0
-            _numberInput.value = ""
-            _amountInput.value = ""
-            return
+        viewModelScope.launch {
+
+            val now = System.currentTimeMillis()
+
+            val currentTotal = repository
+                .getTodayTotalByNumberAndType(
+                    number = _numberInput.value,
+                    playType = _playType.value.uppercase(),
+                    startOfDay = getStartOfDay(now),
+                    endOfDay = getEndOfDay(now)
+                )
+
+            val isAllowed = checkLimitsUseCase.execute(
+                currentTotal = currentTotal,
+                playType = _playType.value,
+                newAmount = amount
+            )
+
+            if (!isAllowed) {
+                _errorMessage.value =
+                    "¡Límite superado para ${_numberInput.value}!"
+                _inputPhase.value = 0
+                _numberInput.value = ""
+                _amountInput.value = ""
+                return@launch
+            }
+
+            continueRegisterPlay()
         }
+    }
+
+    private fun continueRegisterPlay() {
 
         _errorMessage.value = ""
 
@@ -168,29 +186,12 @@ class VaultViewModel(application: Application) : AndroidViewModel(application) {
         )
 
         if (ticket != null) {
+            viewModelScope.launch {
 
+                val listId = getOrCreateActiveList()
 
-                // NUEVO (preparado para el sistema de listas):
-                // aquí más adelante obtendremos la lista abierta
-
-                viewModelScope.launch {
-
-                    // 1 buscar lista activa
-                    val listId = getOrCreateActiveList()
-
-                    // 2 guardar jugada en esa lista
-                    val insertedId = repository.savePlay(ticket, listId)
-
-                    val parsed = PlayParser.parse(ticket.playNumber, ticket.playType)
-                    println("Parsed numbers: ${parsed.numbers}")
-
-                    println("Play guardado en lista $listId con id $insertedId")
-                }
-
-                //println("¡ÉXITO! Ticket encriptado y guardado en SQLCipher con el ID: $insertedId")
-
-                // EJEMPLO FUTURO (aún no lo usamos):
-                // val openList = listRepository.getOpenList()
+                repository.savePlay(ticket, listId)
+            }
         }
 
         _numberInput.value = ""

@@ -30,4 +30,18 @@ class PlayRepository(private val playDao: PlayDao) {
     suspend fun deletePlay(playId: Long) {
         playDao.deletePlay(playId)
     }
+
+    suspend fun getTodayTotalByNumberAndType(
+        number: String,
+        playType: String,
+        startOfDay: Long,
+        endOfDay: Long
+    ): Double {
+        return playDao.getTodayTotalByNumberAndType(
+            number,
+            playType,
+            startOfDay,
+            endOfDay
+        )
+    }
 }

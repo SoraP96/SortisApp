@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import com.example.banca.data.entities.PlayEntity
 
+
 @Dao
 interface PlayDao {
 
@@ -25,4 +26,18 @@ interface PlayDao {
 
     @Query("DELETE FROM plays WHERE id = :playId")
     suspend fun deletePlay(playId: Long)
+
+    @Query("""
+    SELECT COALESCE(SUM(amount), 0)
+    FROM plays
+    WHERE playNumber = :number
+    AND playType = :playType
+    AND timestamp BETWEEN :startOfDay AND :endOfDay
+""")
+    suspend fun getTodayTotalByNumberAndType(
+        number: String,
+        playType: String,
+        startOfDay: Long,
+        endOfDay: Long
+    ): Double
 }

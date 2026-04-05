@@ -2,7 +2,7 @@ package com.example.banca.domain.usecases
 
 class CheckLimitsUseCase {
 
-    private val mockLimits = mapOf(
+    private val limitsByType = mapOf(
         "FIJO" to 500.0,
         "CENTENA" to 300.0,
         "CORRIDO" to 400.0,
@@ -10,28 +10,16 @@ class CheckLimitsUseCase {
         "CANDADO" to 250.0
     )
 
-    private val mockCurrentBets = mutableMapOf(
-        "25_FIJO" to 450.0,
-        "260_CENTENA" to 100.0,
-        "22_CORRIDO" to 50.0,
-        "2221_PARLE" to 0.0
-    )
-
     fun execute(
-        number: String,
+        currentTotal: Double,
         playType: String,
         newAmount: Double
     ): Boolean {
 
-        val typeKey = playType.uppercase()
+        val limit = limitsByType[
+            playType.uppercase()
+        ] ?: 1000.0
 
-        val limit = mockLimits[typeKey] ?: 1000.0
-
-        val currentKey = "${number}_$typeKey"
-        val currentlyBet = mockCurrentBets[currentKey] ?: 0.0
-
-        val totalAfterNewBet = currentlyBet + newAmount
-
-        return totalAfterNewBet <= limit
+        return (currentTotal + newAmount) <= limit
     }
 }
