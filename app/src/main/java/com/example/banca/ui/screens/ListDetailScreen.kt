@@ -13,6 +13,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.banca.ui.viewmodels.ListDetailViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PictureAsPdf
+import com.example.banca.domain.utils.PdfExporter
+import android.content.Intent
+import android.widget.Toast
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
 
 @Composable
 fun ListDetailScreen(
@@ -21,20 +27,12 @@ fun ListDetailScreen(
 ) {
 
     val plays by viewModel.plays.collectAsState()
+    val context = LocalContext.current
+    var expandedMenu by remember { mutableStateOf(false) }
 
     LaunchedEffect(listId) {
         viewModel.loadPlays(listId)
     }
-    //Para exportar a PDF
-/*
-    IconButton(
-        onClick = {
-            viewModel.exportListPdf(listId)
-        }
-    ) {
-        Icon(Icons.Default.PictureAsPdf, null)
-    }
-    */
 
 
     Column(
@@ -43,10 +41,74 @@ fun ListDetailScreen(
             .padding(16.dp)
     ) {
 
-        Text(
-            text = "Detalle Lista $listId",
-            style = MaterialTheme.typography.headlineMedium
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = "Detalle Lista $listId",
+                style = MaterialTheme.typography.headlineMedium
+            )
+
+            Box {
+                IconButton(
+                    onClick = { expandedMenu = true }
+                ) {
+                    Icon(
+                        Icons.Default.MoreVert,
+                        contentDescription = "Menú"
+                    )
+                }
+
+                DropdownMenu(
+                    expanded = expandedMenu,
+                    onDismissRequest = { expandedMenu = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Exportar PDF") },
+                        onClick = {
+                            expandedMenu = false
+
+                            val file = PdfExporter.exportarLista(
+                                context = context,
+                                titulo = "Lista_$listId",
+                                elementos = plays.map {
+                                    "${it.playNumber} - ${it.playType} - ${it.amount}"
+                                }
+                            )
+
+                            val uri = FileProvider.getUriForFile(
+                                context,
+                                "${context.packageName}.provider",
+                                file
+                            )
+
+                            val intent = Intent(Intent.ACTION_SEND).apply {
+                                type = "application/pdf"
+                                putExtra(Intent.EXTRA_STREAM, uri)
+                                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                            }
+
+                            context.startActivity(
+                                Intent.createChooser(intent, "Compartir PDF")
+                            )
+
+                            Toast.makeText(
+                                context,
+                                "PDF exportado correctamente",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        },
+                        leadingIcon = {
+                            Icon(
+                                Icons.Default.PictureAsPdf,
+                                contentDescription = null
+                            )
+                        }
+                    )
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
