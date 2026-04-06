@@ -148,6 +148,7 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
 
         Spacer(modifier = Modifier.height(16.dp))
 
+
         // 📋 LISTAS
         if (lists.isEmpty()) {
             Text("No hay listas para esta fecha")
@@ -179,6 +180,16 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
                     }
                 }
             }
+            Button(
+                onClick = {
+                    viewModel.closeCurrentOpenLists()
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Cerrar lista")
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
         }
     }
 }

@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.Calendar
+import com.example.banca.domain.utils.ShiftUtils
 
 class ListViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -84,6 +85,20 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
 
         viewModelScope.launch {
 
+            if (ShiftUtils.isBettingLocked()) {
+                val lockedLists = listRepository.getListsByDateAndShift(
+                    start,
+                    end,
+                    _selectedShift.value
+                )
+
+                lockedLists
+                    .filter { it.status == "OPEN" }
+                    .forEach { list ->
+                        listRepository.closeList(list.id)
+                    }
+            }
+
             // 🔥 cargar listas por fecha y turno
             val loadedLists = listRepository.getListsByDateAndShift(
                 start,
@@ -121,6 +136,27 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
     // =========================
     // FECHAS
     // =========================
+    fun closeCurrentOpenLists() {
+        viewModelScope.launch {
+
+            val start = getStartOfDay(_selectedDate.value)
+            val end = getEndOfDay(_selectedDate.value)
+
+            val currentLists = listRepository.getListsByDateAndShift(
+                start,
+                end,
+                _selectedShift.value
+            )
+
+            currentLists
+                .filter { it.status == "OPEN" }
+                .forEach { list ->
+                    listRepository.closeList(list.id)
+                }
+
+            loadLists(_selectedDate.value)
+        }
+    }
     private fun getStartOfDay(date: Long): Long {
         val cal = Calendar.getInstance()
         cal.timeInMillis = date

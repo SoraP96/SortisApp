@@ -1,4 +1,10 @@
 
+## v0.7 - Cierre de listas
+- cierre manual desde resumen
+- cierre automático por horario
+- actualización automática de estado
+- flujo completo de turno
+
 ## v0.6 - Seguridad listas
 - bloqueo de listas cerradas
 - bloqueo de listas antiguas
