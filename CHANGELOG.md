@@ -4,6 +4,16 @@
 - restauración completa
 - selector guardar / abrir
 - reinicio seguro de base
+- ✔ backup completo de la base SQLCipher
+  ✔ restauración total del sistema
+  ✔ cifrado persistente de datos
+  ✔ exportación del archivo físico real de la BD
+  ✔ restauración 1:1 sin pérdida de estructura
+  ✔ selector profesional guardar / abrir archivo
+  ✔ recuperación inmediata ante fallos
+  ✔ preservación de listas, jugadas y cierres
+  ✔ compatibilidad con migraciones futuras
+  ✔ seguridad reforzada con Android Keystore
 
 ## v0.7 - Cierre de listas
 - cierre manual desde resumen
