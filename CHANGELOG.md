@@ -1,4 +1,10 @@
 
+## v0.8 - Backup profesional
+- exportación de base SQLCipher cifrada
+- restauración completa
+- selector guardar / abrir
+- reinicio seguro de base
+
 ## v0.7 - Cierre de listas
 - cierre manual desde resumen
 - cierre automático por horario

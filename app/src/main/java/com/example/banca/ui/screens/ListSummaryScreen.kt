@@ -15,6 +15,11 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import kotlinx.coroutines.launch
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import com.example.banca.domain.utils.BackupManager
+import com.example.banca.data.database.DatabaseProvider
+import androidx.compose.ui.platform.LocalContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,6 +31,38 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
     var showDatePicker by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+
+    val backupLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument(
+            "application/octet-stream"
+        )
+    ) { uri ->
+        uri?.let {
+            BackupManager.exportDatabase(context, it)
+
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    "✔ Backup exportado correctamente"
+                )
+            }
+        }
+    }
+
+    val restoreLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let {
+            BackupManager.restoreDatabase(context, it)
+            DatabaseProvider.resetDatabaseInstance()
+
+            scope.launch {
+                snackbarHostState.showSnackbar(
+                    "✔ Backup restaurado correctamente"
+                )
+            }
+        }
+    }
 
     // 🔥 TOTALES REALES desde ViewModel
     val totalAmount by viewModel.totalAmount.collectAsState()
@@ -205,6 +242,27 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text("Cerrar lista")
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = {
+                        backupLauncher.launch("banca_backup.db")
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Exportar backup")
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Button(
+                    onClick = {
+                        restoreLauncher.launch(arrayOf("*/*"))
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Restaurar backup")
                 }
             }
         }

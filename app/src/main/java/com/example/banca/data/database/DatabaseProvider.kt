@@ -12,6 +12,9 @@ object DatabaseProvider {
 
     @Volatile
     private var INSTANCE: AppDatabase? = null
+    fun resetDatabaseInstance() {
+        INSTANCE = null
+    }
 
     fun getDatabase(context: Context): AppDatabase {
         return INSTANCE ?: synchronized(this) {
@@ -56,4 +59,5 @@ object DatabaseProvider {
             .fallbackToDestructiveMigration()
             .build()
     }
+
 }
