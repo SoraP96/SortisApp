@@ -231,6 +231,7 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
                 }
             }
             Button(
+                enabled = lists.isNotEmpty(),
                 onClick = {
                     viewModel.closeCurrentOpenLists()
 
