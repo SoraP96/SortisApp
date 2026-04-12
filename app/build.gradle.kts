@@ -17,8 +17,8 @@ android {
         applicationId = "com.example.banca"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.8"
+        versionCode = 2
+        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -81,6 +81,7 @@ dependencies {
 
     implementation("androidx.navigation:navigation-compose:2.7.7")
 
+    implementation("org.jsoup:jsoup:1.17.2")
 
 
 }

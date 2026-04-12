@@ -1,4 +1,18 @@
 
+# v1.0 - Automatic lottery results sync v1
+✔ integración con Florida Lottery oficial
+✔ soporte Pick 3
+✔ soporte Pick 4
+✔ scraping remoto con Jsoup
+✔ persistencia local en Room
+✔ almacenamiento cifrado SQLCipher
+✔ compatibilidad API 24
+✔ repository dedicado para sincronización
+✔ DAO alineado con arquitectura real
+✔ ResultEntity integrado
+✔ preparado para actualización automática por horario
+✔ base lista para WorkManager
+
 ## v0.8 - Backup profesional
 - exportación de base SQLCipher cifrada
 - restauración completa
