@@ -1,37 +1,70 @@
 package com.example.banca.domain.utils
 
-
 import android.content.Context
 import android.net.Uri
-import java.io.File
+import android.util.Base64
+import com.example.banca.data.database.DatabaseProvider
+import org.json.JSONObject
 
 object BackupManager {
 
     private const val DB_NAME = "banca_vault_db"
 
-    fun exportDatabase(
+    fun exportPortableBackup(
         context: Context,
         destinationUri: Uri
     ) {
         val dbFile = context.getDatabasePath(DB_NAME)
+        val dbBytes = dbFile.readBytes()
 
-        context.contentResolver.openOutputStream(destinationUri)?.use { output ->
-            dbFile.inputStream().use { input ->
-                input.copyTo(output)
-            }
+        val password =
+            DatabaseProvider.getDatabasePassword(context)
+
+        val backupJson = JSONObject().apply {
+            put("db_password", password)
+            put(
+                "db_bytes",
+                Base64.encodeToString(
+                    dbBytes,
+                    Base64.DEFAULT
+                )
+            )
         }
+
+        context.contentResolver
+            .openOutputStream(destinationUri)
+            ?.bufferedWriter()
+            ?.use {
+                it.write(backupJson.toString())
+            }
     }
 
-    fun restoreDatabase(
+    fun restorePortableBackup(
         context: Context,
         sourceUri: Uri
     ) {
-        val dbFile = context.getDatabasePath(DB_NAME)
+        val jsonText = context.contentResolver
+            .openInputStream(sourceUri)
+            ?.bufferedReader()
+            ?.readText()
+            ?: return
 
-        context.contentResolver.openInputStream(sourceUri)?.use { input ->
-            dbFile.outputStream().use { output ->
-                input.copyTo(output)
-            }
-        }
+        val json = JSONObject(jsonText)
+
+        val password = json.getString("db_password")
+        val dbBytes = Base64.decode(
+            json.getString("db_bytes"),
+            Base64.DEFAULT
+        )
+
+        DatabaseProvider.setDatabasePassword(
+            context,
+            password
+        )
+
+        val dbFile = context.getDatabasePath(DB_NAME)
+        dbFile.writeBytes(dbBytes)
+
+        DatabaseProvider.resetDatabaseInstance()
     }
 }

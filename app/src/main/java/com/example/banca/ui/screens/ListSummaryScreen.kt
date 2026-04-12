@@ -39,7 +39,7 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
         )
     ) { uri ->
         uri?.let {
-            BackupManager.exportDatabase(context, it)
+            BackupManager.exportPortableBackup(context, it)
 
             scope.launch {
                 snackbarHostState.showSnackbar(
@@ -53,7 +53,7 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
         ActivityResultContracts.OpenDocument()
     ) { uri ->
         uri?.let {
-            BackupManager.restoreDatabase(context, it)
+            BackupManager.restorePortableBackup(context, it)
             DatabaseProvider.resetDatabaseInstance()
             viewModel.loadLists(selectedDate)
 
