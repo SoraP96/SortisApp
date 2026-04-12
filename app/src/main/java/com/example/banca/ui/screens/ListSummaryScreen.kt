@@ -55,6 +55,7 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
         uri?.let {
             BackupManager.restoreDatabase(context, it)
             DatabaseProvider.resetDatabaseInstance()
+            viewModel.loadLists(selectedDate)
 
             scope.launch {
                 snackbarHostState.showSnackbar(
@@ -228,42 +229,43 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
                         }
                     }
                 }
-                Button(
-                    onClick = {
-                        viewModel.closeCurrentOpenLists()
+            }
+            Button(
+                onClick = {
+                    viewModel.closeCurrentOpenLists()
 
-                        scope.launch {
-                            snackbarHostState.showSnackbar(
-                                message = "✔ Lista cerrada correctamente",
-                                withDismissAction = false
-                            )
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Cerrar lista")
-                }
-                Spacer(modifier = Modifier.height(8.dp))
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "✔ Lista cerrada correctamente",
+                            withDismissAction = false
+                        )
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Cerrar lista")
+            }
+            Spacer(modifier = Modifier.height(8.dp))
 
-                Button(
-                    onClick = {
-                        backupLauncher.launch("banca_backup.db")
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Exportar backup")
-                }
+            Button(
+                enabled = lists.isNotEmpty(),
+                onClick = {
+                    backupLauncher.launch("banca_backup_${formattedDate.replace("/", "_")}.db")
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Exportar backup")
+            }
 
-                Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
-                Button(
-                    onClick = {
-                        restoreLauncher.launch(arrayOf("*/*"))
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text("Restaurar backup")
-                }
+            Button(
+                onClick = {
+                    restoreLauncher.launch(arrayOf("*/*"))
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Restaurar backup")
             }
         }
     }
