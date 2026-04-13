@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import com.example.banca.domain.utils.ShiftUtils
+import com.example.banca.data.repository.ResultRepository
 
 class ListViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -20,6 +21,9 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
 
     // 🔥 NUEVO: repository de jugadas para calcular totales reales
     private val playRepository: PlayRepository
+
+    private val _result = MutableStateFlow<com.example.banca.data.entities.ResultEntity?>(null)
+    val result: StateFlow<com.example.banca.data.entities.ResultEntity?> = _result
 
     init {
         val db = DatabaseProvider.getDatabase(application)
@@ -130,7 +134,13 @@ class ListViewModel(application: Application) : AndroidViewModel(application) {
             _totalPrize.value = prizeSum
             _bankNet.value = bankSum
             _listeroGain.value = listeroSum
+
+            val db = DatabaseProvider.getDatabase(getApplication())
+            val resultRepo = ResultRepository(db.resultDao())
+
+            _result.value = resultRepo.getResultForDate(date)
         }
+
     }
 
     // =========================

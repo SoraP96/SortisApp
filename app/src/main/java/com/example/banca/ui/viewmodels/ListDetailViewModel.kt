@@ -18,6 +18,9 @@ class ListDetailViewModel(application: Application) : AndroidViewModel(applicati
     private val playRepository: PlayRepository
     private val listRepository: ListRepository
 
+    private val _result = MutableStateFlow<com.example.banca.data.entities.ResultEntity?>(null)
+    val result: StateFlow<com.example.banca.data.entities.ResultEntity?> = _result
+
     init {
         val db = DatabaseProvider.getDatabase(application)
         playRepository = PlayRepository(db.playDao())
@@ -38,19 +41,26 @@ class ListDetailViewModel(application: Application) : AndroidViewModel(applicati
 
             val updatedPlays = loadedPlays.map { play ->
 
-                val prize = when {
+                val prize = when (play.playType) {
+                    "FIJO" ->
+                        if (play.playNumber == pick3.takeLast(2))
+                            play.amount * 75
+                        else 0.0
 
-                    play.playType == "FIJO" &&
-                            play.playNumber == pick3.takeLast(2) -> play.amount * 75
+                    "CENTENA" ->
+                        if (play.playNumber == pick3)
+                            play.amount * 500
+                        else 0.0
 
-                    play.playType == "CENTENA" &&
-                            play.playNumber == pick3 -> play.amount * 500
+                    "PARLE" ->
+                        if (play.playNumber == pick4)
+                            play.amount * 1200
+                        else 0.0
 
-                    play.playType == "PARLE" &&
-                            play.playNumber == pick4 -> play.amount * 1200
-
-                    play.playType == "CORRIDO" &&
-                            corridosGanadores.contains(play.playNumber) -> play.amount * 25
+                    "CORRIDO" ->
+                        if (corridosGanadores.contains(play.playNumber))
+                            play.amount * 25
+                        else 0.0
 
                     else -> 0.0
                 }
@@ -64,6 +74,17 @@ class ListDetailViewModel(application: Application) : AndroidViewModel(applicati
             }
 
             _plays.value = updatedPlays
+        }
+
+    }
+
+    fun loadResultForDate(date: Long) {
+        viewModelScope.launch {
+            val db = DatabaseProvider.getDatabase(getApplication())
+            val resultRepo =
+                com.example.banca.data.repository.ResultRepository(db.resultDao())
+
+            _result.value = resultRepo.getResultForDate(date)
         }
     }
 

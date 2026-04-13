@@ -25,6 +25,7 @@ import java.io.FileInputStream
 @Composable
 fun ListDetailScreen(
     listId: Long,
+    selectedDate: Long,
     viewModel: ListDetailViewModel = viewModel()
 ) {
 
@@ -61,8 +62,9 @@ fun ListDetailScreen(
     }
     var expandedMenu by remember { mutableStateOf(false) }
 
-    LaunchedEffect(listId) {
+    LaunchedEffect(listId, selectedDate) {
         viewModel.loadPlays(listId)
+        viewModel.loadResultForDate(selectedDate)
     }
 
 
@@ -157,8 +159,12 @@ fun ListDetailScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Text("Pick3: 260")
-                Text("Pick4: 2221")
+                val result by viewModel.result.collectAsState()
+
+                if (result != null) {
+                    Text("Pick3: ${result?.pick3}")
+                    Text("Pick4: ${result?.pick4}")
+                }
 
                 Spacer(modifier = Modifier.height(12.dp))
 

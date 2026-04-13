@@ -71,6 +71,7 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
     val bankNet by viewModel.bankNet.collectAsState()
 
     val listeroGain by viewModel.listeroGain.collectAsState()
+    val result by viewModel.result.collectAsState()
 
 
     val formattedDate = remember(selectedDate) {
@@ -177,6 +178,22 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
 
             Spacer(modifier = Modifier.height(16.dp))
 
+            result?.let { currentResult ->
+                Card(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Column(
+                        modifier = Modifier.padding(12.dp)
+                    ) {
+                        Text("Resultado de la tirada")
+                        Text("Pick 3: ${currentResult.pick3}")
+                        Text("Pick 4: ${currentResult.pick4}")
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+            }
+
             // RESUMEN REAL
             Card(
                 modifier = Modifier.fillMaxWidth(),
@@ -188,10 +205,11 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    Text("Total jugado: ${"%.0f".format(totalAmount)}")
-                    Text("Premios: ${"%.0f".format(totalPrize)}")
-                    Text("Ganancia listero: ${"%.0f".format(listeroGain)}")
-                    Text("Ganancia Banco: ${"%.0f".format(bankNet)}")
+                    Text("Total jugado: ${totalAmount.toInt()}")
+                    Text("Premios: ${totalPrize.toInt()}")
+                    Text("Ganancia listero: ${listeroGain.toInt()}")
+                    Text("Ganancia Banco: ${bankNet.toInt()}")
+
                 }
             }
 

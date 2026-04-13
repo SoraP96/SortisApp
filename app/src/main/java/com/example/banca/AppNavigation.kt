@@ -40,13 +40,22 @@ fun AppNavigation() {
         composable("lists") {
             ListSummaryScreen(
                 onNavigateToDetail = { listId ->
-                    navController.navigate("list_detail/$listId")
+                    val selectedDate = System.currentTimeMillis()
+                    navController.navigate("list_detail/$listId/$selectedDate")
                 }
             )
         }
-        composable("list_detail/{listId}") { backStackEntry ->
-            val listId = backStackEntry.arguments?.getString("listId")?.toLong() ?: 0L
-            ListDetailScreen(listId = listId)
+        composable("list_detail/{listId}/{selectedDate}") { backStackEntry ->
+            val listId =
+                backStackEntry.arguments?.getString("listId")?.toLong() ?: 0L
+
+            val selectedDate =
+                backStackEntry.arguments?.getString("selectedDate")?.toLong() ?: 0L
+
+            ListDetailScreen(
+                listId = listId,
+                selectedDate = selectedDate
+            )
         }
 
     }

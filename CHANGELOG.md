@@ -1,4 +1,18 @@
 
+# v1.2 - Lottery results UI integration
+
+✔ ListSummaryScreen muestra resultado real
+✔ resultado oculto si no existe
+✔ ListDetailScreen usa resultado real
+✔ eliminación de valores hardcodeados
+✔ soporte histórico por fecha
+✔ ViewModels sincronizados con ResultRepository
+✔ navegación corregida con selectedDate
+✔ compileDebugKotlin resuelto
+✔ crash de String.format corregido
+✔ smart cast issues corregidos
+✔ compatibilidad con listas anteriores
+
 # v1.1 -Hourly automatic result sync
 ✔ sincronización automática cada hora
 ✔ persistencia tras reinicio del móvil
