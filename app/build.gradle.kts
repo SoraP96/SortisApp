@@ -17,8 +17,8 @@ android {
         applicationId = "com.example.banca"
         minSdk = 24
         targetSdk = 36
-        versionCode = 2
-        versionName = "1.0"
+        versionCode = 3
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -83,5 +83,5 @@ dependencies {
 
     implementation("org.jsoup:jsoup:1.17.2")
 
-
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 }

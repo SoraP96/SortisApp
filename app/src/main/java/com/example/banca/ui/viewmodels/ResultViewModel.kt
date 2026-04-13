@@ -5,6 +5,8 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.banca.data.database.DatabaseProvider
+import com.example.banca.data.remote.LotteryRemoteDataSource
+import com.example.banca.data.repository.LotteryResultsRepository
 import com.example.banca.data.repository.PlayRepository
 import com.example.banca.data.repository.ResultRepository
 import com.example.banca.domain.usecases.VerifyPrizesUseCase
@@ -30,6 +32,26 @@ class ResultViewModel(application: Application) : AndroidViewModel(application) 
         playRepository = PlayRepository(playDao)
 
         verifyPrizesUseCase = VerifyPrizesUseCase(playRepository, resultRepository)
+
+        viewModelScope.launch {
+            try {
+                val syncRepository = LotteryResultsRepository(
+                    dao = db.resultDao(),
+                    remoteDataSource = LotteryRemoteDataSource()
+                )
+
+                syncRepository.syncLatestResults("pick3")
+                syncRepository.syncLatestResults("pick4")
+
+                val latest = resultRepository.getLatestResult()
+                latest?.let {
+                    _pick3.value = it.pick3
+                    _pick4.value = it.pick4
+                }
+
+            } catch (_: Exception) {
+            }
+        }
     }
 
     private val _pick3 = MutableStateFlow("260")

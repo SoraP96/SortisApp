@@ -1,4 +1,15 @@
 
+# v1.1 -Hourly automatic result sync
+✔ sincronización automática cada hora
+✔ persistencia tras reinicio del móvil
+✔ retry automático en errores
+✔ conexión solo con red disponible
+✔ actualización Pick 3
+✔ actualización Pick 4
+✔ integración con SQLCipher
+✔ scheduler único sin duplicados
+✔ carga automática al abrir app
+
 # v1.0 - Automatic lottery results sync v1
 ✔ integración con Florida Lottery oficial
 ✔ soporte Pick 3
