@@ -39,8 +39,7 @@ fun AppNavigation() {
         composable("bank_vault") { BankScreen(onBack = { navController.popBackStack() }) }
         composable("lists") {
             ListSummaryScreen(
-                onNavigateToDetail = { listId ->
-                    val selectedDate = System.currentTimeMillis()
+                onNavigateToDetail = { listId, selectedDate ->
                     navController.navigate("list_detail/$listId/$selectedDate")
                 }
             )

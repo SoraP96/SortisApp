@@ -23,7 +23,10 @@ import androidx.compose.ui.platform.LocalContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewModel = viewModel()) {
+fun ListSummaryScreen(
+    onNavigateToDetail: (Long, Long) -> Unit,
+    viewModel: ListViewModel = viewModel()
+) {
 
     val lists by viewModel.lists.collectAsState()
     val shift by viewModel.selectedShift.collectAsState()
@@ -228,7 +231,7 @@ fun ListSummaryScreen(onNavigateToDetail: (Long) -> Unit, viewModel: ListViewMod
                             .padding(vertical = 4.dp),
                         elevation = CardDefaults.cardElevation(2.dp),
                         onClick = {
-                            onNavigateToDetail(list.id)
+                            onNavigateToDetail(list.id, selectedDate)
                         }
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {

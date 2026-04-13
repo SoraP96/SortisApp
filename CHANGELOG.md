@@ -1,6 +1,17 @@
 
-# v1.2 - Lottery results UI integration
+# v1.3 Eastern time schedule and historical date sync
 
+✔ navegación con fecha real
+✔ soporte histórico por fecha
+✔ cierre automático de jugadas
+✔ sincronización automática por horario
+✔ horario oficial Florida Lottery
+✔ soporte EST / EDT
+✔ compatibilidad Android API 24
+✔ optimización WorkManager
+✔ eliminación de parche temporal de fecha
+
+# v1.2 - Lottery results UI integration
 ✔ ListSummaryScreen muestra resultado real
 ✔ resultado oculto si no existe
 ✔ ListDetailScreen usa resultado real

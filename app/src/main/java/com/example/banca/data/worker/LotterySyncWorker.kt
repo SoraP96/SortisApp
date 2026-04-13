@@ -6,6 +6,7 @@ import androidx.work.WorkerParameters
 import com.example.banca.data.database.DatabaseProvider
 import com.example.banca.data.remote.LotteryRemoteDataSource
 import com.example.banca.data.repository.LotteryResultsRepository
+import com.example.banca.domain.utils.ShiftUtils
 
 class LotterySyncWorker(
     appContext: Context,
@@ -21,8 +22,10 @@ class LotterySyncWorker(
                 remoteDataSource = LotteryRemoteDataSource()
             )
 
-            repository.syncLatestResults("pick3")
-            repository.syncLatestResults("pick4")
+            if (ShiftUtils.shouldFetchLotteryResults()) {
+                repository.syncLatestResults("pick3")
+                repository.syncLatestResults("pick4")
+            }
 
             Result.success()
         } catch (e: Exception) {

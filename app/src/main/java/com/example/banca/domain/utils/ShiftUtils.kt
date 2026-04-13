@@ -1,16 +1,24 @@
 package com.example.banca.domain.utils
 
-
 import java.util.Calendar
+import java.util.TimeZone
 
 object ShiftUtils {
 
-    fun getCurrentShift(): String {
-        val cal = Calendar.getInstance()
+    private val easternTimeZone =
+        TimeZone.getTimeZone("America/New_York")
+
+    private fun getEasternTotalMinutes(): Int {
+        val cal = Calendar.getInstance(easternTimeZone)
+
         val hour = cal.get(Calendar.HOUR_OF_DAY)
         val minute = cal.get(Calendar.MINUTE)
 
-        val totalMinutes = hour * 60 + minute
+        return hour * 60 + minute
+    }
+
+    fun getCurrentShift(): String {
+        val totalMinutes = getEasternTotalMinutes()
 
         return if (totalMinutes < (13 * 60 + 30)) {
             "Mañana"
@@ -20,16 +28,38 @@ object ShiftUtils {
     }
 
     fun isBettingLocked(): Boolean {
-        val cal = Calendar.getInstance()
-        val hour = cal.get(Calendar.HOUR_OF_DAY)
-        val minute = cal.get(Calendar.MINUTE)
+        val totalMinutes = getEasternTotalMinutes()
 
-        val totalMinutes = hour * 60 + minute
+        val dayLockStart = 13 * 60 + 15
+        val dayDrawTime = 13 * 60 + 30
 
-        val dayLock = 13 * 60 + 15
-        val nightLock = 21 * 60 + 30
+        val nightLockStart = 21 * 60 + 30
+        val nightDrawTime = 21 * 60 + 45
 
-        return totalMinutes in dayLock until (13 * 60 + 30) ||
-                totalMinutes in nightLock until (21 * 60 + 45)
+        val dayLocked =
+            totalMinutes in dayLockStart until dayDrawTime
+
+        val nightLocked =
+            totalMinutes in nightLockStart until nightDrawTime
+
+        return dayLocked || nightLocked
+    }
+
+    fun shouldFetchLotteryResults(): Boolean {
+        val totalMinutes = getEasternTotalMinutes()
+
+        val dayFetchStart = 13 * 60 + 30
+        val dayFetchEnd = 13 * 60 + 45
+
+        val nightFetchStart = 21 * 60 + 45
+        val nightFetchEnd = 22 * 60
+
+        val dayFetch =
+            totalMinutes in dayFetchStart until dayFetchEnd
+
+        val nightFetch =
+            totalMinutes in nightFetchStart until nightFetchEnd
+
+        return dayFetch || nightFetch
     }
 }
